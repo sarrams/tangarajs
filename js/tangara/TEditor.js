@@ -27,6 +27,8 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
         domEditorText.style.width="100%";
         domEditorText.style.height="100%";
         domEditorText.style.backgroundColor="#C5D6DB";
+        // for iOS to show keyboard
+        domEditorText.setAttribute("contenteditable", "true");
         TEditor.editorId++;
         domEditorCellLeft.appendChild(domEditorText);
         domEditorContainer.appendChild(domEditorCellLeft);

@@ -23,7 +23,7 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
         domEditorCellRight.style.textAlign="center";
         
         var domEditorText = document.createElement("div");
-		domEditorText.setAttribute("contenteditable","true");
+	domEditorText.setAttribute("contenteditable","true");
         domEditorText.id = "teditor_"+TEditor.editorId;
         domEditorText.style.width="100%";
         domEditorText.style.height="100%";

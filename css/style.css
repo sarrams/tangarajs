@@ -1,0 +1,19 @@
+body, html {
+    height:100%;
+    margin:0;
+    padding:0;
+}
+            
+.log {
+    font-family:'Monaco','Menlo','Ubuntu Mono','Consolas','source-code-pro',monospace;
+    font-size:20px;
+}
+            
+.log-success {
+    color:#009900;
+}
+            
+.log-failure {
+    color:#FF0000;
+}
+

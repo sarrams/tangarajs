@@ -1,0 +1,12 @@
+{
+    "fr": {
+        "methods":[
+            {"name":"_moveForward","translated":"avancer","displayed":"avancer(50)"},
+            {"name":"_moveBackward","translated":"reculer","displayed":"reculer(50)"},
+            {"name":"_moveUpward","translated":"monter","displayed":"monter(50)"},
+            {"name":"_moveDownward","translated":"desccendre","displayed":"descendre(50)"},
+            {"name":"_stop","translated":"arreter","displayed":"arrêter()"},
+            {"name":"_change","translated":"changer","displayed":"changer(\"garçon\")"}
+        ]
+    }
+}

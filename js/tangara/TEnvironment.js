@@ -102,7 +102,7 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
             if (typeof this.messages[code] !== 'undefined') {
                 return this.messages[code];
             } else {
-                return "!message not defined!";
+                return code;
             }
         };
 

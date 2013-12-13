@@ -16,9 +16,8 @@ define(['jquery', 'TCanvas', 'TEnvironment', 'TEditor', 'TLog'], function($, TCa
         domFrame.appendChild(log.getElement());
 
         // Set environment
-        env = TEnvironment.instance();
-        env.setCanvas(canvas);
-        env.setLog(log);
+        TEnvironment.setCanvas(canvas);
+        TEnvironment.setLog(log);
 
         this.getElement = function() {
             return domFrame;

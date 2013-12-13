@@ -2,11 +2,7 @@ define(['jquery','objects/TGraphicalObject'], function($, TObject) {
 
     function TCanvas() {
         var domCanvas = document.createElement("div");
-        domCanvas.style.backgroundColor="#FFFFFF";
-        domCanvas.style.width="100%";
-        domCanvas.style.height="70%";
-        domCanvas.style.position="relative";
-        domCanvas.style.overflow="hidden";
+        domCanvas.id = "tcanvas";
         $("body").append(domCanvas);
 
         var graphicalObjects = new Array();

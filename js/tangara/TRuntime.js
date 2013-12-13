@@ -5,22 +5,28 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
         
         this.load = function() {
             require(['TEnvironment'], function(TEnvironment) {
-                var language = TEnvironment.instance().getLanguage();
-                var objectsListUrl = TEnvironment.instance().getObjectsUrl()+"/objects.json";
+                var language = TEnvironment.getLanguage();
+                var objectsListUrl = TEnvironment.getObjectsUrl()+"/objects.json";
                 window.console.log("accessing objects list from: "+objectsListUrl);
-                $.getJSON(objectsListUrl, function(data) {
-                    $.each( data, function( key, val ) {
-                        var lib = "objects/"+val['path']+"/"+key;
-                        if (typeof val['translations'][language] !== 'undefined') {
-                            window.console.log("adding "+lib);
-                            libs.push(lib);
-                            translatedNames.push(val['translations'][language]);
-                        }
-                    });
+                $.ajax({
+                    dataType: "json",
+                    url: objectsListUrl,
+                    async: false,
+                    success: function(data) {
+                        $.each( data, function( key, val ) {
+                            var lib = "objects/"+val['path']+"/"+key;
+                            if (typeof val['translations'][language] !== 'undefined') {
+                                window.console.log("adding "+lib);
+                                libs.push(lib);
+                                translatedNames.push(val['translations'][language]);
+                            }
+                        });
+                    }
                 });
                 // declare global variables
                 require(libs, function() {
                     for(var i= 0; i < translatedNames.length; i++) {
+                        window.console.log("Declaring translated object '"+translatedNames[i]+"'");
                         window[translatedNames[i]] = arguments[i];
                     }
                 });
@@ -38,9 +44,9 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
             }
             require(['TEnvironment'], function(TEnvironment) {
                 if (error)
-                    TEnvironment.instance().addLog(commands, message);
+                    TEnvironment.addLog(commands, message);
                 else
-                    TEnvironment.instance().addLog(commands);
+                    TEnvironment.addLog(commands);
             });
         };
     };

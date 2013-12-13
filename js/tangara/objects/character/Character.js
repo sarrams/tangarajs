@@ -1,11 +1,16 @@
-define(['jquery','TEnvironment', 'objects/TGraphicalObject'], function($, TEnvironment, TGraphicalObject) {
+define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function($, TEnvironment, TUtils, TGraphicalObject) {
     var Character = function(characterName) {
         window.console.log("Initializing character");
         TGraphicalObject.call(this);
         window.console.log("Character initialized");
         this.speed = 8;
-        if (typeof(characterName)==='undefined')
+        if (typeof(characterName)==='undefined') {
             characterName = "boy";
+        } else {
+            var simplifiedName = TUtils.removeAccents(characterName);
+            characterName = this.getMessage(simplifiedName);
+        } 
+            
         this._loadSkeleton(characterName);
     };
 
@@ -49,6 +54,7 @@ define(['jquery','TEnvironment', 'objects/TGraphicalObject'], function($, TEnvir
         var baseImageUrl = this.getResource(name)+"/";
         var skeletonUrl = baseImageUrl+"skeleton.json";
         window.console.log("Skeleton URL : "+skeletonUrl);
+        parent = this;
         $.getJSON(skeletonUrl, function(data) {
             $(element).empty();
             $.each( data['skeleton']['element'], function( key, val ) {
@@ -59,16 +65,17 @@ define(['jquery','TEnvironment', 'objects/TGraphicalObject'], function($, TEnvir
                 image.style.top=val['coordinateY']+"px";
                 element.appendChild(image);
             });
-        }).fail(function( jqxhr, textStatus, error ) {
-            throw "unknwon skeleton";
+        }).fail(function(jqxhr, textStatus, error) {
+            throw new Error(TUtils.format(parent.getMessage("unknwon skeleton"), name));
         });
     };
         
     Character.prototype._change = function(name) {
-        this.loadSkeleton(name);
+        var simplifiedName = TUtils.removeAccents(name);
+        this._loadSkeleton(this.getMessage(simplifiedName));
     };
     
-    TEnvironment.instance().internationalize(Character);
+    TEnvironment.internationalize(Character);
 
     return Character;
 });

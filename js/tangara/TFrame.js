@@ -1,24 +1,46 @@
-define(['jquery', 'TCanvas', 'TEnvironment', 'TEditor', 'TLog'], function($, TCanvas, TEnvironment, TEditor, TLog) {
+define(['jquery', 'split-pane','TCanvas', 'TEnvironment', 'TEditor', 'TLog'], function($, SplitPane, TCanvas, TEnvironment, TEditor, TLog) {
     function TFrame() {
         var domFrame = document.createElement("div");
         domFrame.id = "tframe";
-        
+        domFrame.className = "split-pane fixed-bottom";
+        var topDiv = document.createElement("div");
+        topDiv.id = "tframe-top";
+        topDiv.className = "split-pane-component";
         // Add Canvas
         var canvas = new TCanvas();
-        domFrame.appendChild(canvas.getElement());
+        topDiv.appendChild(canvas.getElement());
+        domFrame.appendChild(topDiv);
 
-        // Add Editor
+        var separator1 = document.createElement("div");
+        separator1.id="tframe-separator";
+        separator1.className="split-pane-divider";
+        domFrame.appendChild(separator1);
+
+        // Add Editor and Log
+        var bottomDiv = document.createElement("div");
+        bottomDiv.id = "tframe-bottom";
+        bottomDiv.className = "split-pane-component";
+        var bottomDivInner = document.createElement("div");
+        bottomDivInner.id = "tframe-bottom-inner";
+        bottomDivInner.className = "split-pane fixed-bottom";
         var editor = new TEditor();
-        domFrame.appendChild(editor.getElement());
-
-        // Add Log
+        var editorElement = editor.getElement();
+        editorElement.className = editorElement.className + " split-pane-component tframe-bottom-top";
+        bottomDivInner.appendChild(editorElement);
+        var separator2 = document.createElement("div");
+        separator2.id = "tframe-bottom-divider";
+        separator2.className="split-pane-divider";
+        bottomDivInner.appendChild(separator2);
         var log = new TLog();
-        domFrame.appendChild(log.getElement());
+        var logElement = log.getElement();
+        logElement.className = logElement.className + " split-pane-component tframe-bottom-bottom";
+        bottomDivInner.appendChild(logElement);
+        bottomDiv.appendChild(bottomDivInner);
+        domFrame.appendChild(bottomDiv);
 
         // Set environment
-        env = TEnvironment.instance();
-        env.setCanvas(canvas);
-        env.setLog(log);
+        TEnvironment.setCanvas(canvas);
+        TEnvironment.setLog(log);
 
         this.getElement = function() {
             return domFrame;
@@ -28,6 +50,7 @@ define(['jquery', 'TCanvas', 'TEnvironment', 'TEditor', 'TLog'], function($, TCa
             canvas.displayed();
             editor.displayed();
             log.displayed();
+            $('.split-pane').splitPane();
         };
 
     }

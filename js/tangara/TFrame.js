@@ -1,9 +1,7 @@
 define(['jquery', 'TCanvas', 'TEnvironment', 'TEditor', 'TLog'], function($, TCanvas, TEnvironment, TEditor, TLog) {
     function TFrame() {
         var domFrame = document.createElement("div");
-        domFrame.style.height="100%";
-        domFrame.style.width="100%";
-        domFrame.style.minHeight="700px";
+        domFrame.id = "tframe";
         
         // Add Canvas
         var canvas = new TCanvas();

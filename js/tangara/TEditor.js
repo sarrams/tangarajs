@@ -2,71 +2,55 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
 
     function TEditor() {
         var domEditor = document.createElement("div");
-        domEditor.style.width = "100%";
-        domEditor.style.height= "20%";
-        domEditor.style.backgroundColor="#C5D6DB";
-        var domEditorContainer = document.createElement("div");
-        domEditorContainer.style.display="table";
-        domEditorContainer.style.height= "100%";
-        domEditorContainer.style.width= "100%";
+        domEditor.className = "teditor";
         
-        var domEditorCellLeft = document.createElement("div");
-        domEditorCellLeft.style.display="table-cell";
-        domEditorCellLeft.style.width="80%";
-        domEditorCellLeft.style.height="100%";
-        domEditorCellLeft.style.padding="5px";
-        var domEditorCellRight = document.createElement("div");
-        domEditorCellRight.style.display="table-cell";
-        domEditorCellRight.style.width="20%";
-        domEditorCellRight.style.height="100%";
-        domEditorCellRight.style.verticalAlign="middle";
-        domEditorCellRight.style.textAlign="center";
+        var domEditorContainer = document.createElement("div");
+        domEditorContainer.className = "teditor-inner";
+        
+        var domEditorCellText = document.createElement("div");
+        domEditorCellText.className = "teditor-text";
+        
+        var domEditorCellButtons = document.createElement("div");
+        domEditorCellButtons.className = "teditor-buttons";
         
         var domEditorText = document.createElement("div");
 	domEditorText.setAttribute("contenteditable","true");
-        domEditorText.id = "teditor_"+TEditor.editorId;
-        domEditorText.style.width="100%";
-        domEditorText.style.height="100%";
-        domEditorText.style.backgroundColor="#C5D6DB";
+        domEditorText.id = "teditor-text-"+TEditor.editorId;
+        TEditor.editorId++;
+        domEditorText.className = "teditor-text-inner";
+
         // for iOS to show keyboard
         domEditorText.setAttribute("contenteditable", "true");
-        TEditor.editorId++;
-        domEditorCellLeft.appendChild(domEditorText);
-        domEditorContainer.appendChild(domEditorCellLeft);
+        domEditorCellText.appendChild(domEditorText);
+        domEditorContainer.appendChild(domEditorCellText);
 
         var buttonExecute = document.createElement("button");
-        buttonExecute.id = "buttonExecute";
-        buttonExecute.style.minWidth="100px";
+        buttonExecute.className = "teditor-button";
         var imageExecute = document.createElement("img");
         imageExecute.src = TEnvironment.instance().getBaseUrl() + "/images/play.png";
-        imageExecute.style.marginRight="5px";
-        imageExecute.style.verticalAlign="text-bottom";
+        imageExecute.className = "teditor-button-image";
         buttonExecute.appendChild(imageExecute);
         buttonExecute.appendChild(document.createTextNode("Exécuter"));
 
         var buttonClear = document.createElement("button");
-        buttonClear.id = "buttonClear";
-        buttonClear.style.minWidth="100px";
+        buttonClear.className = "teditor-button";
         var imageClear = document.createElement("img");
         imageClear.src = TEnvironment.instance().getBaseUrl() + "/images/clear.png";
-        imageClear.style.marginRight="5px";
-        imageClear.style.verticalAlign="text-bottom";
+        imageClear.className = "teditor-button-image";
         buttonClear.appendChild(imageClear);
         buttonClear.appendChild(document.createTextNode("Effacer"));
 
-        domEditorCellRight.appendChild(buttonExecute);
+        domEditorCellButtons.appendChild(buttonExecute);
         var separator = document.createElement("div");
-        separator.style.width="100%";
-        separator.style.height="10px";
-        domEditorCellRight.appendChild(separator);
-        domEditorCellRight.appendChild(buttonClear);
+        separator.className = "teditor-button-separator";
+        domEditorCellButtons.appendChild(separator);
+        domEditorCellButtons.appendChild(buttonClear);
 
-        domEditorContainer.appendChild(domEditorCellRight);
+        domEditorContainer.appendChild(domEditorCellButtons);
         
         domEditor.appendChild(domEditorContainer);
         
         var aceEditor;
-        
         
         this.getElement = function() {
             return domEditor;
@@ -80,7 +64,6 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
             aceEditor.setFontSize("20px");
             aceEditor.setHighlightActiveLine(false);
             aceEditor.focus();
-            
             
             $("#buttonExecute").click(function() {
                 TEnvironment.instance().execute(aceEditor.getSession().getValue());

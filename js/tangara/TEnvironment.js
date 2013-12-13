@@ -1,9 +1,32 @@
 define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, TLog) {
-    function TEnvironment() {
+    var TEnvironment = function() {
         var canvas;
         var log;
         
+        this.messages;
+        
         this.language = "fr";
+
+        this.load = function() {
+            window.console.log("loading");
+            var messageFile = this.getResource("messages.json");
+            window.console.log("getting messages from: "+messageFile);
+            var language = this.language;
+            var parent = this;
+            $.ajax({
+                dataType: "json",
+                url: messageFile,
+                async: false,
+                success: function(data) {
+                    if (typeof data[language] !== 'undefined'){
+                        parent.messages = data[language];
+                        window.console.log("found messages in language: "+language);
+                    } else {
+                        window.console.log("found no messages for language: "+language);
+                    }
+                }
+            });
+        };
 
         this.setCanvas = function(element) {
             canvas = element;
@@ -70,16 +93,25 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
             });
             return initialClass;
         };
+        
+        this.getResource = function(location) {
+            return this.getBaseUrl()+"/js/tangara/resources/"+location;
+        };
+
+        this.getMessage = function(code) {
+            if (typeof this.messages[code] !== 'undefined') {
+                return this.messages[code];
+            } else {
+                return "!message not defined!";
+            }
+        };
 
     }
 
     var environmentInstance = new TEnvironment();
+    environmentInstance.load();
 
-    TEnvironment.instance = function() {
-        return environmentInstance;
-    };
-
-    return TEnvironment;
+    return environmentInstance;//TEnvironment;
 });
 
 

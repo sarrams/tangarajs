@@ -16,7 +16,6 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
         var domEditorText = document.createElement("div");
 	domEditorText.setAttribute("contenteditable","true");
         domEditorText.id = "teditor-text-"+TEditor.editorId;
-        TEditor.editorId++;
         domEditorText.className = "teditor-text-inner";
 
         // for iOS to show keyboard
@@ -27,18 +26,18 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
         var buttonExecute = document.createElement("button");
         buttonExecute.className = "teditor-button";
         var imageExecute = document.createElement("img");
-        imageExecute.src = TEnvironment.instance().getBaseUrl() + "/images/play.png";
+        imageExecute.src = TEnvironment.getBaseUrl() + "/images/play.png";
         imageExecute.className = "teditor-button-image";
         buttonExecute.appendChild(imageExecute);
-        buttonExecute.appendChild(document.createTextNode("Exécuter"));
+        buttonExecute.appendChild(document.createTextNode(TEnvironment.getMessage('button-execute')));
 
         var buttonClear = document.createElement("button");
         buttonClear.className = "teditor-button";
         var imageClear = document.createElement("img");
-        imageClear.src = TEnvironment.instance().getBaseUrl() + "/images/clear.png";
+        imageClear.src = TEnvironment.getBaseUrl() + "/images/clear.png";
         imageClear.className = "teditor-button-image";
         buttonClear.appendChild(imageClear);
-        buttonClear.appendChild(document.createTextNode("Effacer"));
+        buttonClear.appendChild(document.createTextNode(TEnvironment.getMessage('button-clear')));
 
         domEditorCellButtons.appendChild(buttonExecute);
         var separator = document.createElement("div");
@@ -49,6 +48,8 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
         domEditorContainer.appendChild(domEditorCellButtons);
         
         domEditor.appendChild(domEditorContainer);
+
+        TEditor.editorId++;
         
         var aceEditor;
         
@@ -65,15 +66,15 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
             aceEditor.setHighlightActiveLine(false);
             aceEditor.focus();
             
-            $("#buttonExecute").click(function() {
-                TEnvironment.instance().execute(aceEditor.getSession().getValue());
+            $(buttonExecute).click(function() {
+                TEnvironment.execute(aceEditor.getSession().getValue());
                 aceEditor.setValue("", -1);
             });
             
-            $("#buttonClear").click(function() {
-                if (window.confirm("Attention : vous allez effacer l'écran et l'historique\nSouhaitez-vous continuer ?")) {
-                    TEnvironment.instance().getCanvas().clear();
-                    TEnvironment.instance().clearLog();
+            $(buttonClear).click(function() {
+                if (window.confirm(TEnvironment.getMessage('clear-confirm'))) {
+                    TEnvironment.getCanvas().clear();
+                    TEnvironment.clearLog();
                 }
             });
 
@@ -83,7 +84,7 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                 bindKey: {win: 'Return',  mac: 'Return'},
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
-                            TEnvironment.instance().execute(aceEditor.getSession().getValue());
+                            TEnvironment.execute(aceEditor.getSession().getValue());
                             editor.setValue("", -1);
                         });
                     },

@@ -19,7 +19,9 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
         domEditorText.className = "teditor-text-inner";
 
         // for iOS to show keyboard
+        // TODO: add this only for iOS devices
         domEditorText.setAttribute("contenteditable", "true");
+        
         domEditorCellText.appendChild(domEditorText);
         domEditorContainer.appendChild(domEditorCellText);
 

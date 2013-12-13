@@ -3,17 +3,91 @@ body, html {
     margin:0;
     padding:0;
 }
+
+#tframe {
+    height:100%;
+    width:100%;
+    min-height:700px;
+}
+
+#tcanvas {
+    background-color:#FFFFFF;
+    width:100%;
+    height:70%;
+    position:relative;
+    overflow:hidden;
+}
+
+.teditor {
+    width:100%;
+    height:20%;
+    background-color:#C5D6DB;
+}
+
+.teditor-inner {
+    display:table;
+    height:100%;
+    width:100%;
+}
+
+.teditor-text {
+    display:table-cell;
+    width:80%;
+    height:100%;
+    padding:5px;
+}
+
+.teditor-text-inner {
+    width:100%;
+    height:100%;
+}
+
+#teditor-text-0 {
+    background-color:#C5D6DB;
+}
+.teditor-buttons {
+    display:table-cell;
+    width:20%;
+    height:100%;
+    vertical-align:middle;
+    text-align:center;
+}
+
+.teditor-button {
+    min-width:100px;
+}
+
+.teditor-button-image {
+    margin-right:5px;
+    vertical-align:text-bottom;
+}
+
+.teditor-button-separator {
+    width:100%;
+    height:10px;
+}
+
+#tlog-outer {
+    width:100%;
+    height:10%;
+    background-color:#C8C8C8;
+    overflow:scroll;
+}
+
+#tlog-inner {
+    padding:5px;
+}
             
-.log {
+.tlog-row {
     font-family:'Monaco','Menlo','Ubuntu Mono','Consolas','source-code-pro',monospace;
     font-size:20px;
 }
             
-.log-success {
+.tlog-success {
     color:#009900;
 }
             
-.log-failure {
+.tlog-failure {
     color:#FF0000;
 }
 

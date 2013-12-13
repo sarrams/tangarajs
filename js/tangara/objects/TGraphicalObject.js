@@ -2,7 +2,7 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_e
     function TGraphicalObject() {
         this.domObject = document.createElement("div");
         this.domObject.style.position="absolute";
-        var canvas = TEnvironment.instance().getCanvas();
+        var canvas = TEnvironment.getCanvas();
         canvas.addGraphicalObject(this);
     }
 
@@ -13,12 +13,12 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_e
     };
         
     TGraphicalObject.prototype.deleteObject = function() {
-        var canvas = TEnvironment.instance().getCanvas();
+        var canvas = TEnvironment.getCanvas();
         canvas.removeGraphicalObject(this);
     };
         
     TGraphicalObject.prototype.getResource = function(location) {
-        return TEnvironment.instance().getObjectsUrl()+"/"+this.className.toLowerCase()+"/resources/"+location;
+        return TEnvironment.getObjectsUrl()+"/"+this.className.toLowerCase()+"/resources/"+location;
     };
 
 

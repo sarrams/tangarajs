@@ -68,7 +68,7 @@ define(['jquery','TEnvironment', 'objects/TGraphicalObject'], function($, TEnvir
         this.loadSkeleton(name);
     };
     
-    TEnvironment.instance().internationalize(Character);
+    TEnvironment.internationalize(Character);
 
     return Character;
 });

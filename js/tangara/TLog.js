@@ -1,12 +1,9 @@
 define(['jquery','TCanvas'], function($, TCanvas) {
     function TLog() {
         var domOuterLog = document.createElement("div");
-        domOuterLog.style.width="100%";
-        domOuterLog.style.height="10%";
-        domOuterLog.style.backgroundColor="#C8C8C8";
-        domOuterLog.style.overflow="scroll";
+        domOuterLog.id = "tlog-outer";
         var domLog = document.createElement("div");
-        domLog.style.padding="5px";
+        domLog.id = "tlog-inner";
         domOuterLog.appendChild(domLog);
                 
         this.getElement = function() {
@@ -24,9 +21,9 @@ define(['jquery','TCanvas'], function($, TCanvas) {
                 line = lines[i];
                 var row = document.createElement("div");
                 if (success) {
-                    row.className = "log log-success";
+                    row.className = "tlog-row tlog-success";
                 } else {
-                    row.className = "log log-failure";
+                    row.className = "tlog-row tlog-failure";
                 }
                 row.appendChild(document.createTextNode(line));
                 domLog.appendChild(row);
@@ -34,7 +31,7 @@ define(['jquery','TCanvas'], function($, TCanvas) {
             }
             if (!success) {
                 var row = document.createElement("div");
-                row.className = "log log-failure";
+                row.className = "tlog-row tlog-failure";
                 row.appendChild(document.createTextNode(errorMessage));
                 domLog.appendChild(row);
                 domOuterLog.scrollTop = domOuterLog.scrollHeight;

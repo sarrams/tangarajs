@@ -1,0 +1,10 @@
+{
+    "Character": {
+        "path": "character",
+        "translations": {
+            "fr": "Personnage",
+            "es": "Personaje",
+            "en": "Character"
+        }
+    }
+}

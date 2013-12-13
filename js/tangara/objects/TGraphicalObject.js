@@ -1,30 +1,26 @@
 define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_enhanced,TEnvironment) {
     function TGraphicalObject() {
-        var env = TEnvironment.instance();
-        var domObject = document.createElement("div");
-        
-        var debug = false;
-        
-        if (debug) {
-            domObject.style.backgroundColor="green";
-            domObject.style.width="10px";
-            domObject.style.height="10px";
-        }
-        
-        domObject.style.position="absolute";
-
-        var canvas = env.getCanvas();
-
-        this.getElement = function () {
-            return domObject;
-        };
-        
-        this.deleteObject = function() {
-            canvas.removeGraphicalObject(this);
-        };
-
+        this.domObject = document.createElement("div");
+        this.domObject.style.position="absolute";
+        var canvas = TEnvironment.instance().getCanvas();
         canvas.addGraphicalObject(this);
     }
+
+    TGraphicalObject.prototype.className = "";
+
+    TGraphicalObject.prototype.getElement = function () {
+        return this.domObject;
+    };
+        
+    TGraphicalObject.prototype.deleteObject = function() {
+        var canvas = TEnvironment.instance().getCanvas();
+        canvas.removeGraphicalObject(this);
+    };
+        
+    TGraphicalObject.prototype.getResource = function(location) {
+        return TEnvironment.instance().getObjectsUrl()+"/"+this.className.toLowerCase()+"/resources/"+location;
+    };
+
 
     return TGraphicalObject;
 });

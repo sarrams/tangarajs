@@ -5,8 +5,8 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
         
         this.load = function() {
             require(['TEnvironment'], function(TEnvironment) {
-                var language = TEnvironment.instance().getLanguage();
-                var objectsListUrl = TEnvironment.instance().getObjectsUrl()+"/objects.json";
+                var language = TEnvironment.getLanguage();
+                var objectsListUrl = TEnvironment.getObjectsUrl()+"/objects.json";
                 window.console.log("accessing objects list from: "+objectsListUrl);
                 $.getJSON(objectsListUrl, function(data) {
                     $.each( data, function( key, val ) {
@@ -38,9 +38,9 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
             }
             require(['TEnvironment'], function(TEnvironment) {
                 if (error)
-                    TEnvironment.instance().addLog(commands, message);
+                    TEnvironment.addLog(commands, message);
                 else
-                    TEnvironment.instance().addLog(commands);
+                    TEnvironment.addLog(commands);
             });
         };
     };

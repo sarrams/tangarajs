@@ -1,5 +1,5 @@
 define(['jquery','TEnvironment', 'objects/TGraphicalObject'], function($, TEnvironment, TGraphicalObject) {
-    Character = function(characterName) {
+    var Character = function(characterName) {
         window.console.log("Initializing character");
         TGraphicalObject.call(this);
         window.console.log("Character initialized");

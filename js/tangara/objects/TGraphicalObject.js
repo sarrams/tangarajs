@@ -20,6 +20,8 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_e
         var messageFile = this.getResource("messages.json");
         var language = TEnvironment.getLanguage();
         var parent = this;
+
+        if (this.className.length != 0) {
         $.ajax({
             dataType: "json",
             url: messageFile,
@@ -33,14 +35,15 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_e
                 }
             }
         });
+      }
     };
 
-    
+
     TGraphicalObject.prototype.deleteObject = function() {
         var canvas = TEnvironment.getCanvas();
         canvas.removeGraphicalObject(this);
     };
-        
+
     TGraphicalObject.prototype.getResource = function(location) {
         return TEnvironment.getObjectsUrl()+"/"+this.className.toLowerCase()+"/resources/"+location;
     };

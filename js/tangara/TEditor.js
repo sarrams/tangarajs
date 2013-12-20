@@ -58,21 +58,21 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
         this.getElement = function() {
             return domEditor;
         };
-        
+	
         this.displayed = function() {
             aceEditor = ace.edit(domEditorText.id);
             aceEditor.getSession().setMode("ace/mode/java");
             aceEditor.setShowPrintMargin(false);
-            aceEditor.renderer.setShowGutter(false); 
+            aceEditor.renderer.setShowGutter(false);
             aceEditor.setFontSize("20px");
             aceEditor.setHighlightActiveLine(false);
             aceEditor.focus();
-            
+        
             $(buttonExecute).click(function() {
                 TEnvironment.execute(aceEditor.getSession().getValue());
                 aceEditor.setValue("", -1);
             });
-            
+        
             $(buttonClear).click(function() {
                 if (window.confirm(TEnvironment.getMessage('clear-confirm'))) {
                     TEnvironment.getCanvas().clear();
@@ -80,6 +80,9 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                 }
             });
 
+            var nb_command = 0;
+            var tmp = 0;
+            var archives_command=[];
             
             aceEditor.commands.addCommand({
                 name: 'myCommand',
@@ -87,7 +90,51 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
                             TEnvironment.execute(aceEditor.getSession().getValue());
+                            archives_command.push($.trim(aceEditor.getSession().getValue()));
                             editor.setValue("", -1);
+                            nb_command++;
+                            tmp = nb_command;
+                        });
+                    },
+                    readOnly: true // false if this command should not apply in readOnly mode
+             });
+			aceEditor.commands.addCommand({
+                name: 'myCommand2',
+                bindKey: {win: 'Up',  mac: 'Up'},
+                    exec: function(editor) {
+                        require(['TEnvironment'], function(TEnvironment) {
+                            var command;
+                            if (tmp > 0)
+                                tmp--;
+                            command = archives_command[tmp];
+                            aceEditor.getSession().setValue(command);
+                            aceEditor.navigateLineEnd();
+                        });
+                    },
+                    readOnly: true // false if this command should not apply in readOnly mode
+             });
+			aceEditor.commands.addCommand({
+                name: 'myCommand3',
+                bindKey: {win: 'Down',  mac: 'Down'},
+                    exec: function(editor) {
+                        require(['TEnvironment'], function(TEnvironment) {
+                            var command;
+							if (tmp < nb_command)
+								tmp++;
+                            command = archives_command[tmp];
+                            aceEditor.getSession().setValue(command);
+                            aceEditor.navigateLineEnd();
+                        });
+                    },
+                    readOnly: true // false if this command should not apply in readOnly mode
+             });
+			 aceEditor.commands.addCommand({
+                name: 'myCommand4',
+                bindKey: {win: 'Escape',  mac: 'Escape'},
+                    exec: function(editor) {
+                        require(['TEnvironment'], function(TEnvironment) {
+                            editor.setValue("", -1);
+							tmp = nb_comm
                         });
                     },
                     readOnly: true // false if this command should not apply in readOnly mode

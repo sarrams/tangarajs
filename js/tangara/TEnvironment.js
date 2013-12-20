@@ -6,11 +6,11 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
         this.messages;
         
         this.language = "fr";
-
+        
         this.load = function() {
             window.console.log("loading");
             var messageFile = this.getResource("messages.json");
-            window.console.log("getting messages from: "+messageFile);
+            window.console.log("getting messages from: " + messageFile);
             var language = this.language;
             var parent = this;
             $.ajax({
@@ -62,7 +62,7 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
         this.getBaseUrl = function() {
             return window.location.protocol + "//" + window.location.host+ window.location.pathname.split("/").slice(0, -1).join("/");
         };
-
+        
         this.getObjectsUrl = function() {
             return this.getBaseUrl()+"/js/tangara/objects";
         };
@@ -79,7 +79,7 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
             var translationFile = initialClass.prototype.getResource("i18n.json");
             window.console.log("traduction : "+translationFile);
             var language = this.language;
-            
+        
             $.ajax({
                 dataType: "json",
                 url: translationFile,
@@ -106,7 +106,7 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
             }
         };
 
-    }
+    };
 
     var environmentInstance = new TEnvironment();
     environmentInstance.load();

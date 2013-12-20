@@ -3,16 +3,16 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
     function TEditor() {
         var domEditor = document.createElement("div");
         domEditor.className = "teditor";
-        
+
         var domEditorContainer = document.createElement("div");
         domEditorContainer.className = "teditor-inner";
-        
+
         var domEditorCellText = document.createElement("div");
         domEditorCellText.className = "teditor-text";
-        
+
         var domEditorCellButtons = document.createElement("div");
         domEditorCellButtons.className = "teditor-buttons";
-        
+
         var domEditorText = document.createElement("div");
 	domEditorText.setAttribute("contenteditable","true");
         domEditorText.id = "teditor-text-"+TEditor.editorId;
@@ -21,7 +21,7 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
         // for iOS to show keyboard
         // TODO: add this only for iOS devices
         domEditorText.setAttribute("contenteditable", "true");
-        
+
         domEditorCellText.appendChild(domEditorText);
         domEditorContainer.appendChild(domEditorCellText);
 
@@ -48,17 +48,17 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
         domEditorCellButtons.appendChild(buttonClear);
 
         domEditorContainer.appendChild(domEditorCellButtons);
-        
+
         domEditor.appendChild(domEditorContainer);
 
         TEditor.editorId++;
-        
+
         var aceEditor;
-        
+
         this.getElement = function() {
             return domEditor;
         };
-	
+
         this.displayed = function() {
             aceEditor = ace.edit(domEditorText.id);
             aceEditor.getSession().setMode("ace/mode/java");
@@ -67,12 +67,12 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
             aceEditor.setFontSize("20px");
             aceEditor.setHighlightActiveLine(false);
             aceEditor.focus();
-        
+
             $(buttonExecute).click(function() {
                 TEnvironment.execute(aceEditor.getSession().getValue());
                 aceEditor.setValue("", -1);
             });
-        
+
             $(buttonClear).click(function() {
                 if (window.confirm(TEnvironment.getMessage('clear-confirm'))) {
                     TEnvironment.getCanvas().clear();
@@ -83,7 +83,7 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
             var nb_command = 0;
             var tmp = 0;
             var archives_command=[];
-            
+
             aceEditor.commands.addCommand({
                 name: 'myCommand',
                 bindKey: {win: 'Return',  mac: 'Return'},
@@ -134,15 +134,15 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
                             editor.setValue("", -1);
-							tmp = nb_comm
+							tmp = nb_command;
                         });
                     },
                     readOnly: true // false if this command should not apply in readOnly mode
              });
         };
-        
+
     };
-    
+
     TEditor.editorId = 0;
 
     return TEditor;

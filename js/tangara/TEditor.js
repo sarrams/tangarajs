@@ -141,7 +141,6 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
 								aceEditor.getSession().setValue(commandline);
 								aceEditor.moveCursorToPosition(cursorPosition);
 							}
-
                         });
                     },
                     readOnly: true // false if this command should not apply in readOnly mode
@@ -151,18 +150,25 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                 bindKey: {win: 'Escape',  mac: 'Escape'},
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
-							history = nb_command;
-							if (history > 0){
+							var currentLine = aceEditor.getSession().getValue();
+							if (history == nb_command) {
+								if (commandline_not_ended != currentLine)
+								{
+									commandline = currentLine;
+									cursorPosition = aceEditor.getCursorPositionScreen();
+								}
+							}
+							else {
+								history = nb_command;
 								commandline = commandline_not_ended;
-								aceEditor.getSession().setValue(commandline);
-	                            aceEditor.moveCursorToPosition(cursorPosition);
-                           }
+	                       	}
+							aceEditor.getSession().setValue(commandline);
+							aceEditor.moveCursorToPosition(cursorPosition);
                         });
                     },
                     readOnly: true // false if this command should not apply in readOnly mode
              });
         };
-
     };
 
     TEditor.editorId = 0;

@@ -84,6 +84,7 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
             var history = 0;
             var archives_command=[];
             var commandline_not_ended;
+            var cursorPosition;
 
             aceEditor.commands.addCommand({
                 name: 'myCommand',
@@ -109,10 +110,11 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
                             var commandline;
-                            if (history == nb_command)
+                            if (history == nb_command) {
                             	commandline_not_ended = aceEditor.getSession().getValue();
-
-                            if (history > 0){
+                            	cursorPosition = aceEditor.getCursorPositionScreen();
+                           }
+                            if (history > 0) {
                                 history--;
                                 commandline = archives_command[history];
                                 aceEditor.getSession().setValue(commandline);
@@ -131,12 +133,15 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
 							if (history < nb_command){
 								history++;
 								commandline = archives_command[history];
+	                            aceEditor.getSession().setValue(commandline);
+	                            aceEditor.navigateLineEnd();
 							}
 							if (history == nb_command){
 								commandline = commandline_not_ended;
+								aceEditor.getSession().setValue(commandline);
+								aceEditor.moveCursorToPosition(cursorPosition);
 							}
-                            aceEditor.getSession().setValue(commandline);
-                            aceEditor.navigateLineEnd();
+
                         });
                     },
                     readOnly: true // false if this command should not apply in readOnly mode
@@ -150,7 +155,7 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
 							if (history > 0){
 								commandline = commandline_not_ended;
 								aceEditor.getSession().setValue(commandline);
-	                            aceEditor.navigateLineEnd();
+	                            aceEditor.moveCursorToPosition(cursorPosition);
                            }
                         });
                     },

@@ -81,19 +81,24 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
             });
 
             var nb_command = 0;
-            var tmp = 0;
+            var history = 0;
             var archives_command=[];
+            var commandline_not_ended;
 
             aceEditor.commands.addCommand({
                 name: 'myCommand',
                 bindKey: {win: 'Return',  mac: 'Return'},
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
-                            TEnvironment.execute(aceEditor.getSession().getValue());
-                            archives_command.push($.trim(aceEditor.getSession().getValue()));
+                            commandline = aceEditor.getSession().getValue();
+                            TEnvironment.execute(commandline);
                             editor.setValue("", -1);
-                            nb_command++;
-                            tmp = nb_command;
+                            if (commandline.length > 0){
+	                            archives_command.push($.trim(commandline));
+	                            nb_command++;
+	                            history = nb_command;
+	                            command_not_ended ="";
+                            }
                         });
                     },
                     readOnly: true // false if this command should not apply in readOnly mode
@@ -103,12 +108,16 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                 bindKey: {win: 'Up',  mac: 'Up'},
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
-                            var command;
-                            if (tmp > 0)
-                                tmp--;
-                            command = archives_command[tmp];
-                            aceEditor.getSession().setValue(command);
-                            aceEditor.navigateLineEnd();
+                            var commandline;
+                            if (history == nb_command)
+                            	commandline_not_ended = aceEditor.getSession().getValue();
+
+                            if (history > 0){
+                                history--;
+                                commandline = archives_command[history];
+                                aceEditor.getSession().setValue(commandline);
+                                aceEditor.navigateLineEnd();
+                            }
                         });
                     },
                     readOnly: true // false if this command should not apply in readOnly mode
@@ -118,11 +127,15 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                 bindKey: {win: 'Down',  mac: 'Down'},
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
-                            var command;
-							if (tmp < nb_command)
-								tmp++;
-                            command = archives_command[tmp];
-                            aceEditor.getSession().setValue(command);
+                            var commandline;
+							if (history < nb_command){
+								history++;
+								commandline = archives_command[history];
+							}
+							if (history == nb_command){
+								commandline = commandline_not_ended;
+							}
+                            aceEditor.getSession().setValue(commandline);
                             aceEditor.navigateLineEnd();
                         });
                     },
@@ -133,8 +146,12 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                 bindKey: {win: 'Escape',  mac: 'Escape'},
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
-                            editor.setValue("", -1);
-							tmp = nb_command;
+							history = nb_command;
+							if (history > 0){
+								commandline = commandline_not_ended;
+								aceEditor.getSession().setValue(commandline);
+	                            aceEditor.navigateLineEnd();
+                           }
                         });
                     },
                     readOnly: true // false if this command should not apply in readOnly mode

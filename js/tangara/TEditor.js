@@ -80,10 +80,10 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                 }
             });
 
-            var nb_command = 0;
+            var totalCommands = 0;
             var history = 0;
             var archives_command=[];
-            var commandline_not_ended;
+            var commandlineNotEnded;
             var cursorPosition;
 
             aceEditor.commands.addCommand({
@@ -96,9 +96,9 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                             editor.setValue("", -1);
                             if (commandline.length > 0){
 	                            archives_command.push($.trim(commandline));
-	                            nb_command++;
-	                            history = nb_command;
-	                            command_not_ended ="";
+	                            totalCommands++;
+	                            history = totalCommands;
+	                            commandlineNotEnded ="";
                             }
                         });
                     },
@@ -110,8 +110,8 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
                             var commandline;
-                            if (history == nb_command) {
-                            	commandline_not_ended = aceEditor.getSession().getValue();
+                            if (history == totalCommands) {
+                            	commandlineNotEnded = aceEditor.getSession().getValue();
                             	cursorPosition = aceEditor.getCursorPositionScreen();
                            }
                             if (history > 0) {
@@ -130,14 +130,14 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
                             var commandline;
-							if (history < nb_command){
+							if (history < totalCommands){
 								history++;
 								commandline = archives_command[history];
 	                            aceEditor.getSession().setValue(commandline);
 	                            aceEditor.navigateLineEnd();
 							}
-							if (history == nb_command){
-								commandline = commandline_not_ended;
+							if (history == totalCommands){
+								commandline = commandlineNotEnded;
 								aceEditor.getSession().setValue(commandline);
 								aceEditor.moveCursorToPosition(cursorPosition);
 							}
@@ -151,16 +151,16 @@ define(['jquery','ace/ace', 'TCanvas', 'TEnvironment'], function($,ace,TCanvas,T
                     exec: function(editor) {
                         require(['TEnvironment'], function(TEnvironment) {
 							var currentLine = aceEditor.getSession().getValue();
-							if (history == nb_command) {
-								if (commandline_not_ended != currentLine)
+							if (history == totalCommands) {
+								if (commandlineNotEnded != currentLine)
 								{
 									commandline = currentLine;
 									cursorPosition = aceEditor.getCursorPositionScreen();
 								}
 							}
 							else {
-								history = nb_command;
-								commandline = commandline_not_ended;
+								history = totalCommands;
+								commandline = commandlineNotEnded;
 	                       	}
 							aceEditor.getSession().setValue(commandline);
 							aceEditor.moveCursorToPosition(cursorPosition);

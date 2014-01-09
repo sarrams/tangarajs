@@ -31,7 +31,7 @@ define(['jquery','objects/TGraphicalObject'], function($, TObject) {
             while (graphicalObjects.length>0) {
                 graphicalObjects[0].deleteObject();
             }
-        }
+        };
 
     }
 

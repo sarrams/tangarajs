@@ -2,11 +2,15 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
     function TRuntime() {
         var libs = new Array();
         var translatedNames = new Array();
+        var thatObject = Object.create(null);
+        
         
         this.load = function() {
             require(['TEnvironment'], function(TEnvironment) {
                 var language = TEnvironment.getLanguage();
                 var objectsListUrl = TEnvironment.getObjectsUrl()+"/objects.json";
+                
+                //runtime
                 window.console.log("accessing objects list from: "+objectsListUrl);
                 $.ajax({
                     dataType: "json",
@@ -37,7 +41,13 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
             var error = false;
             var message;
             try {
-                eval(commands);
+                // sandbox : prevent window and document objects from direct access 
+                // and remove reference to 'this'
+                // not secure though : these objects can still be accessed using functions
+                // e.g. (function(){this.window.alert("hello");})()
+                var objectsSandbox = new Function('window', 'document', commands);
+                var thisSandbox = objectsSandbox.bind(thatObject);
+                thisSandbox({}, {});
             } catch (e) {
                 error = true;
                 message = e.message;

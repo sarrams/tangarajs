@@ -21,7 +21,7 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_e
         var language = TEnvironment.getLanguage();
         var parent = this;
 
-        if (this.className.length != 0) {
+        if (this.className.length !== 0) {
         $.ajax({
             dataType: "json",
             url: messageFile,

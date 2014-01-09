@@ -11,17 +11,17 @@ body, html {
 }
 
 #tframe-top {
-    height:70%;
+    bottom:40%;
     margin-bottom:8px;
+    overflow:hidden;
 }
 
 #tframe-separator {
-    bottom:30%;
+    bottom:40%;
 }
 
 #tframe-bottom {
-    height:30%;
-    min-height:200px;
+    height:40%;
 }
 
 .tframe-bottom-top {

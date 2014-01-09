@@ -3,7 +3,6 @@ define(['jquery','objects/TGraphicalObject'], function($, TObject) {
     function TCanvas() {
         var domCanvas = document.createElement("div");
         domCanvas.id = "tcanvas";
-        $("body").append(domCanvas);
 
         var graphicalObjects = new Array();
 

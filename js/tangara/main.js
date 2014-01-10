@@ -5,7 +5,7 @@ require.config({
         "jquery":'../libs/jquery-1.9.0/jquery.min',
         "jquery_animate_enhanced":'../libs/jquery.animate-enhanced/jquery.animate-enhanced.min',
         "ace":'../libs/ace',
-        "split-pane":'../libs/split-pane/split-pane',
+        "split-pane":'../libs/split-pane/split-pane'
     }
 });
 
@@ -21,5 +21,4 @@ require(['jquery', 'TFrame'],function($, TFrame) {
     });
    
 });
-
 

@@ -3,12 +3,26 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
         var libs = new Array();
         var translatedNames = new Array();
         var thatObject = Object.create(null);
-        
+        var runtimeFrame;
+        var runtimeCallback;
         
         this.load = function() {
             require(['TEnvironment'], function(TEnvironment) {
                 var language = TEnvironment.getLanguage();
                 var objectsListUrl = TEnvironment.getObjectsUrl()+"/objects.json";
+                
+                // create runtime frame
+                window.bindSandbox = function(callback) {
+                    require(['TRuntime'], function(TRuntime) {
+                        TRuntime.instance().setCallback(callback);
+                    });
+                };
+                var iframe = document.createElement("iframe");
+                iframe.className = "runtime-frame";
+                iframe.setAttribute("src", "sandbox.html");
+                document.body.appendChild(iframe);
+                runtimeFrame = iframe.contentWindow || iframe;
+
                 
                 //runtime
                 window.console.log("accessing objects list from: "+objectsListUrl);
@@ -31,7 +45,7 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
                 require(libs, function() {
                     for(var i= 0; i < translatedNames.length; i++) {
                         window.console.log("Declaring translated object '"+translatedNames[i]+"'");
-                        window[translatedNames[i]] = arguments[i];
+                        runtimeFrame[translatedNames[i]] = arguments[i];
                     }
                 });
             });
@@ -41,13 +55,11 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
             var error = false;
             var message;
             try {
-                // sandbox : prevent window and document objects from direct access 
-                // and remove reference to 'this'
-                // not secure though : these objects can still be accessed using functions
-                // e.g. (function(){this.window.alert("hello");})()
-                var objectsSandbox = new Function('window', 'document', commands);
-                var thisSandbox = objectsSandbox.bind(thatObject);
-                thisSandbox({}, {});
+                if (typeof (runtimeCalback) === 'undefined') {
+                    eval(commands);
+                } else {
+                    runtimeCallback(commands);
+                }
             } catch (e) {
                 error = true;
                 message = e.message;
@@ -58,6 +70,10 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
                 else
                     TEnvironment.addLog(commands);
             });
+        };
+        
+        this.setCallback = function(callback) {
+            runtimeCallback = callback;
         };
     };
     

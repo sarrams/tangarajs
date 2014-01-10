@@ -55,7 +55,7 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
             var error = false;
             var message;
             try {
-                if (typeof (runtimeCalback) === 'undefined') {
+                if (typeof (runtimeCallback) === 'undefined') {
                     eval(commands);
                 } else {
                     runtimeCallback(commands);

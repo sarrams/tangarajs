@@ -2,7 +2,6 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
     function TRuntime() {
         var libs = new Array();
         var translatedNames = new Array();
-        var thatObject = Object.create(null);
         var runtimeFrame;
         var runtimeCallback;
         
@@ -12,17 +11,7 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
                 var objectsListUrl = TEnvironment.getObjectsUrl()+"/objects.json";
                 
                 // create runtime frame
-                window.bindSandbox = function(callback) {
-                    require(['TRuntime'], function(TRuntime) {
-                        TRuntime.instance().setCallback(callback);
-                    });
-                };
-                var iframe = document.createElement("iframe");
-                iframe.className = "runtime-frame";
-                iframe.setAttribute("src", "sandbox.html");
-                document.body.appendChild(iframe);
-                runtimeFrame = iframe.contentWindow || iframe;
-
+                runtimeFrame = TEnvironment.initRuntimeFrame();
                 
                 //runtime
                 window.console.log("accessing objects list from: "+objectsListUrl);
@@ -80,11 +69,11 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
     var runtimeInstance = new TRuntime();
     runtimeInstance.load();
 
-    TRuntime.instance = function() {
+    /*TRuntime.instance = function() {
         return runtimeInstance;
-    };
+    };*/
     
-    return TRuntime;
+    return runtimeInstance;//TRuntime;
 });
 
 

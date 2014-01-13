@@ -2,6 +2,8 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
     var TEnvironment = function() {
         var canvas;
         var log;
+        var runtimeFrame;
+        var runtimeCallback;
         
         this.messages;
         
@@ -44,7 +46,7 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
         };
         
         this.execute = function(command) {
-            TRuntime.instance().execute(command);
+            TRuntime.execute(command);
         };
         
         this.addLog = function(text, success) {
@@ -104,6 +106,55 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
             } else {
                 return code;
             }
+        };
+        
+        this.initRuntimeFrame = function() {
+            if (typeof runtimeFrame === 'undefined') {
+                window.bindSandbox = function(callback) {
+                    require(['TEnvironment'], function(TEnvironment) {
+                        TEnvironment.setRuntimeCallback(callback);
+                    });
+                };
+                var iframe = document.createElement("iframe");
+                iframe.className = "runtime-frame";
+                iframe.setAttribute("src", "sandbox.html");
+                document.body.appendChild(iframe);
+                runtimeFrame = iframe.contentWindow || iframe;
+            }
+            return runtimeFrame;
+        };
+        
+        this.getRuntimeFrame = function() {
+            return runtimeFrame;
+        };
+        
+        this.setRuntimeCallback = function(callback) {
+            runtimeCallback = callback;
+            TRuntime.setCallback(callback);
+        };
+        
+        this.getRuntimeCallback = function() {
+            return runtimeCallback;
+        };
+        
+        this.getTObjectName = function(reference) {
+            var name;
+            $.each(runtimeFrame, function(key, value) {
+                if (value === reference) {
+                    name = key;
+                    return false;
+                }
+            });
+            return name;
+        };
+        
+        this.deleteTObject = function(reference) {
+            $.each(runtimeFrame, function(key, value) {
+                if (value === reference) {
+                    delete runtimeFrame[key];
+                    return false;
+                }
+            });
         };
 
     };

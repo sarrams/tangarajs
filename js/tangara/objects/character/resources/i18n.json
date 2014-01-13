@@ -6,7 +6,8 @@
             {"name":"_moveUpward","translated":"monter","displayed":"monter(50)"},
             {"name":"_moveDownward","translated":"descendre","displayed":"descendre(50)"},
             {"name":"_stop","translated":"arreter","displayed":"arrêter()"},
-            {"name":"_change","translated":"changer","displayed":"changer(\"garçon\")"}
+            {"name":"_change","translated":"changer","displayed":"changer(\"garçon\")"},
+            {"name":"_delete","translated":"supprimer","displayed":"supprimer()"}
         ]
     }
 }

@@ -38,10 +38,10 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_e
       }
     };
 
-
     TGraphicalObject.prototype.deleteObject = function() {
         var canvas = TEnvironment.getCanvas();
         canvas.removeGraphicalObject(this);
+        TEnvironment.deleteTObject(this);
     };
 
     TGraphicalObject.prototype.getResource = function(location) {
@@ -54,6 +54,10 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_e
         } else {
             return code;
         }
+    };
+    
+    TGraphicalObject.prototype._delete = function() {
+        this.deleteObject();
     };
 
     return TGraphicalObject;

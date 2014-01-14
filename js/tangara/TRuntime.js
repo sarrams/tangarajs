@@ -67,13 +67,8 @@ define(['jquery', 'TEnvironment'], function($, TEnvironment) {
     };
     
     var runtimeInstance = new TRuntime();
-    runtimeInstance.load();
-
-    /*TRuntime.instance = function() {
-        return runtimeInstance;
-    };*/
     
-    return runtimeInstance;//TRuntime;
+    return runtimeInstance;
 });
 
 

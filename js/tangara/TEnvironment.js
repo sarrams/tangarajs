@@ -1,16 +1,18 @@
-define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, TLog) {
+define(['jquery','TRuntime', 'quintus'], function($, TRuntime, Quintus) {
     var TEnvironment = function() {
         var canvas;
         var log;
         var runtimeFrame;
         var runtimeCallback;
+        var quintusInstance;
         
         this.messages;
         
         this.language = "fr";
         
         this.load = function() {
-            window.console.log("loading");
+            window.console.log("*** Loading Tangara Environment ***");
+            window.console.log("* Retrieving translated messages");
             var messageFile = this.getResource("messages.json");
             window.console.log("getting messages from: " + messageFile);
             var language = this.language;
@@ -28,6 +30,18 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
                     }
                 }
             });
+            this.loadGraphics();
+            this.loadRuntime();
+        };
+        
+        this.loadGraphics = function() {
+            window.console.log("* Loading Graphics");
+            quintusInstance = Quintus().include("Sprites, Scenes, 2D, UI");
+        };
+        
+        this.loadRuntime = function() {
+            window.console.log("* Loading Runtime");
+            TRuntime.load();
         };
 
         this.setCanvas = function(element) {
@@ -156,13 +170,22 @@ define(['jquery','TCanvas','TRuntime', 'TLog'], function($, TCanvas, TRuntime, T
                 }
             });
         };
+        
+        this.setQuintusInstance = function(instance) {
+            quintusInstance = instance;
+        };
+        
+        this.getQuintusInstance = function() {
+            return quintusInstance;
+        };
 
     };
 
     var environmentInstance = new TEnvironment();
+    
     environmentInstance.load();
 
-    return environmentInstance;//TEnvironment;
+    return environmentInstance;
 });
 
 

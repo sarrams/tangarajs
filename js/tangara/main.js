@@ -5,7 +5,8 @@ require.config({
         "jquery":'../libs/jquery-1.9.0/jquery.min',
         "jquery_animate_enhanced":'../libs/jquery.animate-enhanced/jquery.animate-enhanced.min',
         "ace":'../libs/ace',
-        "split-pane":'../libs/split-pane/split-pane'
+        "split-pane":'../libs/split-pane/split-pane',
+        "quintus":'../libs/quintus-0.2.0/quintus-all.min'
     }
 });
 
@@ -13,10 +14,10 @@ require.config({
 //baseUrl: 'js/tangara',
 // Start the main app logic.
 require(['jquery', 'TFrame'],function($, TFrame) {
+    frame = new TFrame();
+    domFrame = frame.getElement();
+    $("body").append(domFrame);
     $(document).ready( function() {
-        frame = new TFrame();
-        domFrame = frame.getElement();
-        $("body").append(domFrame);
         frame.displayed();
     });
    

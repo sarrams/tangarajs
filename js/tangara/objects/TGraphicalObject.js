@@ -1,19 +1,23 @@
-define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_enhanced,TEnvironment) {
+define(['jquery','jquery_animate_enhanced','TEnvironment'], function($, animate_enhanced, TEnvironment) {
     function TGraphicalObject() {
-        this.domObject = document.createElement("div");
-        this.domObject.style.position="absolute";
-        var canvas = TEnvironment.getCanvas();
+        this.qObject = new this.qSprite();
         this.load();
+        var canvas = TEnvironment.getCanvas();
         canvas.addGraphicalObject(this);
     }
 
     TGraphicalObject.prototype.className = "";
+    
+    var QInstance = TEnvironment.getQuintusInstance();
+    
+    QInstance.Sprite.extend("TGraphicalObject",{w:10,h:10});
+    
+    TGraphicalObject.prototype.qSprite = QInstance.TGraphicalObject;
 
     TGraphicalObject.prototype.messages = new Array();
 
-
-    TGraphicalObject.prototype.getElement = function () {
-        return this.domObject;
+    TGraphicalObject.prototype.getSprite = function () {
+        return this.qObject;
     };
 
     TGraphicalObject.prototype.load = function() {
@@ -54,6 +58,10 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($,animate_e
         } else {
             return code;
         }
+    };
+    
+    TGraphicalObject.prototype.getQObject = function() {
+        return this.qObject;
     };
     
     TGraphicalObject.prototype._delete = function() {

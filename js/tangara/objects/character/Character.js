@@ -18,6 +18,15 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
 
     Character.prototype.className = "Character";
         
+    var QInstance = TEnvironment.getQuintusInstance();
+    QInstance.TGraphicalObject.extend("Character",{
+        init: function(p) {
+            this._super({w:20,h:20,asset:"http://localhost:8383/tangarajs/images/play.png"});
+        }
+    });
+    
+    Character.prototype.qSprite = QInstance.Character;
+
     Character.prototype._moveForward = function(value) {
         var element = this.getElement();
         $(element).animate({"left": "+="+value+"px"}, this.speed*value, 'linear');
@@ -50,24 +59,34 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
         
     Character.prototype._loadSkeleton = function(name) {
         window.console.log("load Skeleton");
-        var element = this.getElement();
+        
+        Q.load("penguin.png",function() {
+            var penguin = new Q.Penguin();
+
+           Q.gameLoop(function(dt) {
+           Q.clear();
+     penguin.update(dt);
+     penguin.render(Q.ctx);
+   });
+ });
+        /*var mainSprite = this.getSprite();
+        mainSprite.w = 200;
+        mainSprite.h = 200;
         var baseImageUrl = this.getResource(name)+"/";
         var skeletonUrl = baseImageUrl+"skeleton.json";
         window.console.log("Skeleton URL : "+skeletonUrl);
-        parent = this;
+        var parent = this;
+        var QInstance = TEnvironment.getQuintusInstance(); 
+        var QStage = QInstance.stage();
         $.getJSON(skeletonUrl, function(data) {
-            $(element).empty();
             $.each( data['skeleton']['element'], function( key, val ) {
-                var image = document.createElement("img");
-                image.src = baseImageUrl+ val['image'];
-                image.style.position="absolute";
-                image.style.left=val['coordinateX']+"px";
-                image.style.top=val['coordinateY']+"px";
-                element.appendChild(image);
+                var element = new QInstance.Sprite({asset:baseImageUrl+ val['image'], cx:val['coordinateX'], cy:val['coordinateY']});
+                QStage.insert(element, mainSprite);
+                
             });
         }).fail(function(jqxhr, textStatus, error) {
             throw new Error(TUtils.format(parent.getMessage("unknwon skeleton"), name));
-        });
+        });*/
     };
         
     Character.prototype._change = function(name) {

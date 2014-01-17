@@ -36,7 +36,7 @@ define(['jquery','TRuntime', 'quintus'], function($, TRuntime, Quintus) {
         
         this.loadGraphics = function() {
             window.console.log("* Loading Graphics");
-            quintusInstance = Quintus().include("Sprites, Scenes, 2D, UI");
+            quintusInstance = Quintus().include("Sprites, Scenes, 2D, UI, Anim");
         };
         
         this.loadRuntime = function() {

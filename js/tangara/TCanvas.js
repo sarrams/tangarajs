@@ -1,9 +1,9 @@
-define(['jquery','objects/TGraphicalObject','TEnvironment','quintus'], function($, TObject, TEnvironment, Quintus) {
+define(['TEnvironment'], function(TEnvironment) {
 
     function TCanvas() {
         var domCanvas = document.createElement("canvas");
         domCanvas.id = "tcanvas";
-        
+                
         var QStage;
 
         var graphicalObjects = new Array();
@@ -29,9 +29,17 @@ define(['jquery','objects/TGraphicalObject','TEnvironment','quintus'], function(
         
         this.displayed = function() {
             var QInstance = TEnvironment.getQuintusInstance();
-            QInstance.setup("tcanvas",{ height:domCanvas.style.height, width:domCanvas.style.width});
+            //QInstance.setup("tcanvas",{ height:domCanvas.style.height, width:domCanvas.style.width});
+            QInstance.setup("tcanvas", {maximize: true });
             QInstance.stageScene(null);
             QStage = QInstance.stage();
+            // remove fixed width and height set up by quintus
+            var canvas = document.getElementById("tcanvas");
+            /*canvas.removeAttribute("style");
+            canvas.removeAttribute("width");
+            canvas.removeAttribute("height");
+            var container = document.getElementById("tcanvas_container");
+            container.removeAttribute("style");*/
         };
         
         this.clear = function() {

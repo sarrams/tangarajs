@@ -10,7 +10,7 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($, animate_
     
     var QInstance = TEnvironment.getQuintusInstance();
     
-    QInstance.Sprite.extend("TGraphicalObject",{w:10,h:10});
+    QInstance.Sprite.extend("TGraphicalObject",{w:10,h:10,x:0,y:0});
     
     TGraphicalObject.prototype.qSprite = QInstance.TGraphicalObject;
 

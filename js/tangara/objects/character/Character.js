@@ -51,52 +51,83 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
                 name:"",
                 moveUp:true,
                 initialized:false,
-                rotationSpeed:0.025
+                rotationSpeed:0.025,
+                leftArm:null,
+                rightArm:null,
+                moving:false
             },props),defaultProps);
             this.add("tween");
         },
         startAnimation: function() {
-            this.changeWay();
+            if (this.p.name === "chest" || this.p.name === "tail")  {
+              this.breathe();
+            }
         },
-        changeWay: function() {
-            var p = this.p;
-            if (p.name === "rightArm") {
+        breathe: function() {
+          var p = this.p;
+          switch (p.name) {
+            case 'chest' :
+              // movement with chest and arms
+              if (p.moveUp) {
+                  this.animate({y:p.y-3},1, qInstance.Easing.Linear, {callback:this.breathe});
+              } else {
+                  this.animate({y:p.y+3},1, qInstance.Easing.Linear, {callback:this.breathe});
+              }
+              if (p.leftArm !== null) {
+                p.leftArm.p.moveUp = p.moveUp;
+                p.leftArm.breathe();
+              }
+              if (p.rightArm !== null) {
+                p.rightArm.p.moveUp = p.moveUp;
+                p.rightArm.breathe();
+              }
+              p.moveUp = !p.moveUp;
+              break;
+            case 'tail' :
+              // movement with only tail
+              if (p.moveUp) {
+                  this.animate({angle:p.angle+4},1, qInstance.Easing.Linear, {callback:this.breathe});
+              } else {
+                  this.animate({angle:p.angle-4},1, qInstance.Easing.Linear, {callback:this.breathe});
+              }
+              p.moveUp = !p.moveUp;
+              break;
+            case 'rightArm' :
+              if (!p.moving) {
                 if (p.moveUp) {
-                    this.animate({angle:p.angle+4},1, qInstance.Easing.Linear, {callback:this.changeWay});
+                    this.animate({angle:p.angle+4},1, qInstance.Easing.Linear);
                 } else {
-                    this.animate({angle:p.angle-4},1, qInstance.Easing.Linear, {callback:this.changeWay});
+                    this.animate({angle:p.angle-4},1, qInstance.Easing.Linear);
                 }
-            } else if (p.name === "leftArm") {
+              }
+              break;
+            case 'leftArm' :
+              if (!p.moving) {
                 if (p.moveUp) {
-                    this.animate({angle:p.angle-4},1, qInstance.Easing.Linear, {callback:this.changeWay});
+                    this.animate({angle:p.angle-4},1, qInstance.Easing.Linear);
                 } else {
-                    this.animate({angle:p.angle+4},1, qInstance.Easing.Linear, {callback:this.changeWay});
+                    this.animate({angle:p.angle+4},1, qInstance.Easing.Linear);
                 }
-            } else if (p.name === "chest") {
-                if (p.moveUp) {
-                    this.animate({y:p.y-4},1, qInstance.Easing.Linear, {callback:this.changeWay});
-                } else {
-                    this.animate({y:p.y+4},1, qInstance.Easing.Linear, {callback:this.changeWay});
-                }
-            } else if (p.name === "tail") {
-                if (p.moveUp) {
-                    this.animate({angle:p.angle+4},1, qInstance.Easing.Linear, {callback:this.changeWay});
-                } else {
-                    this.animate({angle:p.angle-4},1, qInstance.Easing.Linear, {callback:this.changeWay});
-                }
-            } 
-
-            p.moveUp = !p.moveUp;
+              }
+              break;
+          }
         },
         raise: function(value) {
+          p = this.p;
+          p.moving = true;
           this.stop();
-          var duration = Math.abs(value*this.p.rotationSpeed);
-          this.animate({angle:this.p.angle + value},duration, qInstance.Easing.Linear, {callback:this.changeWay});
+          var duration = Math.abs(value*p.rotationSpeed);
+          this.animate({angle:p.angle + value},duration, qInstance.Easing.Linear, {callback:this.stopMoving});
         },
         lower: function(value) {
+          p = this.p;
+          p.moving = true;
           this.stop();
           var duration = Math.abs(value*this.p.rotationSpeed);
-          this.animate({angle:this.p.angle - value},duration, qInstance.Easing.Linear, {callback:this.changeWay});          
+          this.animate({angle:this.p.angle - value},duration, qInstance.Easing.Linear, {callback:this.stopMoving});
+        },
+        stopMoving: function() {
+          this.p.moving=false;
         }
     });
 
@@ -122,7 +153,7 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
         this.qObject.p.destinationY+=value;
         return;
     };
-        
+    
     Character.prototype._stop = function() {
         this.qObject.p.destinationX = this.qObject.p.x;
         this.qObject.p.destinationY = this.qObject.p.y;
@@ -156,6 +187,9 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
         for (var i=0; i<qObject.children.length; i++) {
           qObject.children[i].destroy();
         }
+        var chest = null;
+        var leftArm = null;
+        var rightArm = null;
         var character = this;
         qInstance.load(assets,function() {
             for (var i=0; i<elements.length; i++) {
@@ -170,13 +204,30 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
                 element.p.x = val['coordinateX']+element.p.cx;
                 element.p.y = val['coordinateY']+element.p.cy;
                 qStage.insert(element, qObject);
-                if (val['name'] === 'leftArm' || val['name'] === 'leftLeg') {
-                  character.leftElement = element;
-                }
-                if (val['name'] === 'rightArm' || val['name'] === 'rightLeg') {
-                  character.rightElement = element;
+                switch(val['name']) {
+                  case 'leftArm' : 
+                    character.leftElement = element;
+                    leftArm = element;
+                    break;
+                  case 'rightArm' :
+                    character.rightElement = element;
+                    rightArm = element;
+                    break;
+                  case 'leftLeg' : 
+                    character.leftElement = element;
+                    break;
+                  case 'rightLeg' :
+                    character.rightElement = element;
+                    break;
+                  case 'chest' :
+                    chest = element;
+                    break;
                 }
                 element.startAnimation();
+            }
+            if (chest !== null) {
+              chest.p.leftArm = leftArm;
+              chest.p.rightArm = rightArm;
             }
             if (character.initialize) {
                 qObject.p.x = qObject.p.w/2;

@@ -31,21 +31,38 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
         },
         step: function(dt) {
             var p = this.p;
-            var step = p.velocity*dt; 
-            if (p.x < p.destinationX) {
-                p.x = Math.min(p.x+step, p.destinationX); 
-            } else if (p.x > p.destinationX) {
-                p.x = Math.max(p.x-step, p.destinationX); 
+            if (!p.dragging) {
+              var step = p.velocity*dt; 
+              if (p.x < p.destinationX) {
+                  p.x = Math.min(p.x+step, p.destinationX); 
+              } else if (p.x > p.destinationX) {
+                  p.x = Math.max(p.x-step, p.destinationX); 
+              }
+              if (p.y < p.destinationY) {
+                  p.y = Math.min(p.y+step, p.destinationY); 
+              } else if (p.y > p.destinationY) {
+                  p.y = Math.max(p.y-step, p.destinationY); 
+              }
             }
-            if (p.y < p.destinationY) {
-                p.y = Math.min(p.y+step, p.destinationY); 
-            } else if (p.y > p.destinationY) {
-                p.y = Math.max(p.y-step, p.destinationY); 
-            }
+        },
+        drag: function(touch) {
+          for (var i=0; i<this.children.length; i++) {
+            this.children[i].stopAnimation();
+          }
+          this._super(touch);
+        },
+        touchEnd: function(touch) {
+          this.p.destinationX = this.p.x;
+          this.p.destinationY = this.p.y;
+          this._super(touch);
+          for (var i=0; i<this.children.length; i++) {
+            this.children[i].startAnimation();
+          }
         }
+
     });
 
-    qInstance.TGraphicalObject.extend("CharacterPart", {
+    qInstance.Sprite.extend("CharacterPart", {
         init: function(props,defaultProps) {
             this._super(qInstance._extend({
                 name:"",
@@ -54,11 +71,24 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
                 rotationSpeed:0.025,
                 leftArm:null,
                 rightArm:null,
-                moving:false
+                moving:false,
+                initX:0,
+                initY:0,
+                initAngle:0
             },props),defaultProps);
             this.add("tween");
         },
+        drag: function(touch) {
+          this.container.drag(touch);
+        },
+        touchEnd: function(touch) {
+          this.container.touchEnd(touch);
+        },
         startAnimation: function() {
+            this.p.initX = this.p.x;
+            this.p.initY = this.p.y;
+            this.p.initAngle = this.p.angle;
+            this.p.moveUp = true;
             if (this.p.name === "chest" || this.p.name === "tail")  {
               this.breathe();
             }
@@ -112,21 +142,28 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
               break;
           }
         },
+        stopAnimation: function() {
+          this.stop();
+          this.p.x = this.p.initX;
+          this.p.y = this.p.initY;
+          this.p.angle = this.p.initAngle;
+        },
         raise: function(value) {
           p = this.p;
           p.moving = true;
-          this.stop();
+          this.stopAnimation();
           var duration = Math.abs(value*p.rotationSpeed);
           this.animate({angle:p.angle + value},duration, qInstance.Easing.Linear, {callback:this.stopMoving});
         },
         lower: function(value) {
           p = this.p;
           p.moving = true;
-          this.stop();
+          this.stopAnimation();
           var duration = Math.abs(value*this.p.rotationSpeed);
           this.animate({angle:this.p.angle - value},duration, qInstance.Easing.Linear, {callback:this.stopMoving});
         },
         stopMoving: function() {
+          this.p.initAngle=this.p.angle;
           this.p.moving=false;
         }
     });

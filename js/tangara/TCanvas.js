@@ -4,13 +4,13 @@ define(['TEnvironment'], function(TEnvironment) {
         var domCanvas = document.createElement("canvas");
         domCanvas.id = "tcanvas";
                 
-        var QStage;
+        var qStage;
 
         var graphicalObjects = new Array();
 
         this.addGraphicalObject = function(object) {
-            if (typeof QStage !== 'undefined') {
-                QStage.insert(object.getQObject());
+            if (typeof qStage !== 'undefined') {
+                qStage.insert(object.getQObject());
                 graphicalObjects.push(object);
             }
         };
@@ -18,7 +18,7 @@ define(['TEnvironment'], function(TEnvironment) {
         this.removeGraphicalObject = function(object) {
             var index = graphicalObjects.indexOf(object);
             if (index > -1) {
-                QStage.remove(object.getQObject());
+                qStage.remove(object.getQObject());
                 graphicalObjects.splice(index, 1);
             }
         };
@@ -28,11 +28,11 @@ define(['TEnvironment'], function(TEnvironment) {
         };
         
         this.displayed = function() {
-            var QInstance = TEnvironment.getQuintusInstance();
+            var qInstance = TEnvironment.getQuintusInstance();
             //QInstance.setup("tcanvas",{ height:domCanvas.style.height, width:domCanvas.style.width});
-            QInstance.setup("tcanvas", {maximize: true });
-            QInstance.stageScene(null);
-            QStage = QInstance.stage();
+            qInstance.setup("tcanvas", {maximize: true }).touch(qInstance.SPRITE_ALL);
+            qInstance.stageScene(null);
+            qStage = qInstance.stage();
             // remove fixed width and height set up by quintus
             var canvas = document.getElementById("tcanvas");
             /*canvas.removeAttribute("style");

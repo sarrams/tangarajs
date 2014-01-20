@@ -49,6 +49,10 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
           for (var i=0; i<this.children.length; i++) {
             this.children[i].stopAnimation();
           }
+          if (!this.p.dragging) {
+            touch.origX = this.p.x;
+            touch.origY = this.p.y;
+          }
           this._super(touch);
         },
         touchEnd: function(touch) {

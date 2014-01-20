@@ -9,7 +9,7 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
             var simplifiedName = TUtils.removeAccents(characterName);
             characterName = this.getMessage(simplifiedName);
         }
-        var intialize = true;
+        var initialize = true;
         this._loadSkeleton(characterName);
     };
 
@@ -48,7 +48,7 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
         init: function(props,defaultProps) {
             this._super(qInstance._extend({
                 name:"",
-                chestUp:true,
+                moveUp:true,
                 chestShift:50,
                 chestAmplitude:50,
                 initialized:false
@@ -61,63 +61,33 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
         changeWay: function() {
             var p = this.p;
             if (p.name === "rightArm") {
-                if (p.chestUp) {
-                    this.animate({angle:5},1, qInstance.Easing.Linear, {callback:this.changeWay});
+                if (p.moveUp) {
+                    this.animate({angle:4},1, qInstance.Easing.Linear, {callback:this.changeWay});
                 } else {
-                    this.animate({angle:-5},1, qInstance.Easing.Linear, {callback:this.changeWay});
+                    this.animate({angle:-4},1, qInstance.Easing.Linear, {callback:this.changeWay});
                 }
             } else if (p.name === "leftArm") {
-                if (p.chestUp) {
-                    this.animate({angle:-5},1, qInstance.Easing.Linear, {callback:this.changeWay});
+                if (p.moveUp) {
+                    this.animate({angle:-4},1, qInstance.Easing.Linear, {callback:this.changeWay});
                 } else {
-                    this.animate({angle:5},1, qInstance.Easing.Linear, {callback:this.changeWay});
+                    this.animate({angle:4},1, qInstance.Easing.Linear, {callback:this.changeWay});
                 }
             } else if (p.name === "chest") {
-                if (p.chestUp) {
-                    this.animate({y:p.y-5},1, qInstance.Easing.Linear, {callback:this.changeWay});
+                if (p.moveUp) {
+                    this.animate({y:p.y-4},1, qInstance.Easing.Linear, {callback:this.changeWay});
                 } else {
-                    this.animate({y:p.y+5},1, qInstance.Easing.Linear, {callback:this.changeWay});
-                }
-            }
-
-            p.chestUp = !p.chestUp;
-        },
-        coucou: function() {
-            window.alert("coucou");
-        }
-    /*        var p = this.p;
-            if (p.name === "rightArm") {
-                if (p.chestUp) {
-                    this.matrix.rotate(p.chestShift);
-                } else {
-                    this.matrix.rotate(-p.chestShift);
-                }
-            } else if (p.name === "leftArm") {
-                if (p.chestUp) {
-                    this.matrix.rotate(1);
-                } else {
-                    this.matrix.rotate(-1);
-                }
-            } else if (p.name === "chest") {
-                if (p.chestUp) {
-                    this.matrix.translate(0,-1);
-                } else {
-                    this.matrix.translate(0,1);
+                    this.animate({y:p.y+4},1, qInstance.Easing.Linear, {callback:this.changeWay});
                 }
             } else if (p.name === "tail") {
-                if (p.chestUp) {
-                    this.matrix.rotate(1);
+                if (p.moveUp) {
+                    this.animate({angle:4},1, qInstance.Easing.Linear, {callback:this.changeWay});
                 } else {
-                    this.matrix.rotate(-1);
+                    this.animate({angle:-4},1, qInstance.Easing.Linear, {callback:this.changeWay});
                 }
-            }
-            p.chestShift--;
-            if (p.chestShift <= 0) {
-                p.chestUp = !p.chestUp;
-                p.chestDown = !p.chestDown;
-                p.chestShift = p.chestAmplitude;
-            }
-        }*/
+            } 
+
+            p.moveUp = !p.moveUp;
+        }
     });
 
     
@@ -150,23 +120,12 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
     };
         
     Character.prototype._loadSkeleton = function(name) {
-        window.console.log("load Skeleton");
+        window.console.log("loading skeleton");
         var baseImageUrl = this.getResource(name)+"/";
-        
-        /*var skeletonUrl = baseImageUrl+"boy.png";
-        var qObject = this.qObject;
-        QInstance.load(skeletonUrl,function() {
-            qObject.asset(skeletonUrl, true);
-            qObject.p.x = qObject.p.w/2;
-            qObject.p.y = qObject.p.h/2;
-            qObject.p.destinationX = qObject.p.w/2;
-            qObject.p.destinationY = qObject.p.h/2;
-        });*/
         var skeletonUrl = baseImageUrl+"skeleton.json";
         window.console.log("Skeleton URL : "+skeletonUrl);
         var parent = this;
         var elements = new Array();
-        var points = new Array();
         var assets = new Array();
         $.ajax({
             dataType: "json",
@@ -177,9 +136,6 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
                     elements.push(val);
                     assets.push(baseImageUrl+val['image']);
                 });
-                $.each( data['skeleton']['point'], function( key, val ) {
-                    points[val['name']] = val;
-                });
             }
         }).fail(function(jqxhr, textStatus, error) {
             throw new Error(TUtils.format(parent.getMessage("unknwon skeleton"), name));
@@ -187,13 +143,21 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
         
         var qObject = this.qObject;
         var qStage = qInstance.stage();
+        for (var i=0; i<qObject.children.length; i++) {
+          qObject.children[i].destroy();
+        }
         qInstance.load(assets,function() {
             for (var i=0; i<elements.length; i++) {
                 var val = elements[i];
                 var element = new qInstance.CharacterPart({asset:baseImageUrl+ val['image'], name:val['name']});
-                element.p.x = element.p.w/2+parseInt(val['coordinateX']);
-                element.p.y = element.p.h/2+parseInt(val['coordinateY']);
-                // TODO : add center coordinates to elements element.p.cx = parseInt(val['coordinateY'])
+                if (typeof val['cx'] !== 'undefined') {
+                  element.p.cx = val['cx'];
+                }
+                if (typeof val['cy'] !== 'undefined') {
+                  element.p.cy = val['cy'];
+                }
+                element.p.x = val['coordinateX']+element.p.cx;
+                element.p.y = val['coordinateY']+element.p.cy;
                 qStage.insert(element, qObject);
                 element.startAnimation();
             }
@@ -205,39 +169,6 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
                 this.initialize = false;
             }
         });
-        
-        /*
-        $.getJSON(skeletonUrl, function(data) {
-            $.each( data['skeleton']['element'], function( key, val ) {
-                var element = new QInstance.Sprite({asset:baseImageUrl+ val['image'], cx:val['coordinateX'], cy:val['coordinateY']});
-                QStage.insert(element, mainSprite);
-                
-            });
-        }).fail(function(jqxhr, textStatus, error) {
-            throw new Error(TUtils.format(parent.getMessage("unknwon skeleton"), name));
-        });*/
-        
-        
-        
-        
-        /*var mainSprite = this.getSprite();
-        mainSprite.w = 200;
-        mainSprite.h = 200;
-        var baseImageUrl = this.getResource(name)+"/";
-        var skeletonUrl = baseImageUrl+"skeleton.json";
-        window.console.log("Skeleton URL : "+skeletonUrl);
-        var parent = this;
-        var QInstance = TEnvironment.getQuintusInstance(); 
-        var QStage = QInstance.stage();
-        $.getJSON(skeletonUrl, function(data) {
-            $.each( data['skeleton']['element'], function( key, val ) {
-                var element = new QInstance.Sprite({asset:baseImageUrl+ val['image'], cx:val['coordinateX'], cy:val['coordinateY']});
-                QStage.insert(element, mainSprite);
-                
-            });
-        }).fail(function(jqxhr, textStatus, error) {
-            throw new Error(TUtils.format(parent.getMessage("unknwon skeleton"), name));
-        });*/
     };
         
     Character.prototype._change = function(name) {

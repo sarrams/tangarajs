@@ -1,18 +1,11 @@
 {
     "skeleton": {
 		"element": [
-			{ "coordinateX":"0", "coordinateY":"10", "image":"tail.gif", "name":"tail"},
-			{ "coordinateX":"56", "coordinateY":"78", "image":"rightArm.gif", "name":"rightArm"},
-			{ "coordinateX":"77", "coordinateY":"78", "image":"leftArm.gif", "name":"leftArm"},
-			{ "coordinateX":"10", "coordinateY":"45", "image":"body.gif", "name":"chest"},
-			{ "coordinateX":"65", "coordinateY":"0", "image":"head.gif", "name":"head"}
-		],
-		"point": [
-			{ "coordinateX": "17", "coordinateY": "50", "name":"tailBasis" },
-			{ "coordinateX": "81", "coordinateY": "79", "name":"leftShoulder" },
-			{ "coordinateX": "60", "coordinateY": "79", "name":"rightShoulder" },
-			{ "coordinateX": "81", "coordinateY": "121", "name":"leftHand" },
-			{ "coordinateX": "60", "coordinateY": "121", "name":"rightHand" }
+			{ "coordinateX":0, "coordinateY":10, "image":"tail.gif", "name":"tail", "cx":22, "cy":45},
+			{ "coordinateX":56, "coordinateY":78, "image":"rightArm.gif", "name":"rightLeg"},
+			{ "coordinateX":77, "coordinateY":78, "image":"leftArm.gif", "name":"leftLeg"},
+			{ "coordinateX":10, "coordinateY":45, "image":"body.gif", "name":"body"},
+			{ "coordinateX":65, "coordinateY":0, "image":"head.gif", "name":"head"}
 		]
     }
 }

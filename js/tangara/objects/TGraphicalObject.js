@@ -66,6 +66,7 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($, animate_
     TGraphicalObject.prototype.deleteObject = function() {
         var canvas = TEnvironment.getCanvas();
         canvas.removeGraphicalObject(this);
+        this.getQObject().destroy();
         TEnvironment.deleteTObject(this);
     };
 

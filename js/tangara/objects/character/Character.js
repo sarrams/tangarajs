@@ -1,4 +1,3 @@
-"use strict";
 define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function($, TEnvironment, TUtils, TGraphicalObject) {
     var Character = function(characterName) {
         window.console.log("Initializing character");

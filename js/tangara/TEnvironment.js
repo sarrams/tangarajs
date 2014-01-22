@@ -120,6 +120,11 @@ define(['jquery','TRuntime', 'quintus'], function($, TRuntime, Quintus) {
             return this.getBaseUrl()+"/js/tangara/resources/"+location;
         };
 
+        this.getUserResource = function(location) {
+            // TODO: to be replaced with user directory management
+            return this.getBaseUrl()+"/tests/"+location;
+        };
+
         this.getMessage = function(code) {
             if (typeof this.messages[code] !== 'undefined') {
                 return this.messages[code];

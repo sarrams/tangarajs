@@ -104,6 +104,12 @@ define(['jquery','TRuntime', 'quintus'], function($, TRuntime, Quintus) {
                     window.console.log("Language : "+language);
                     $.each(data[language]['methods'], function(key, val ) {
                         initialClass.prototype[val['translated']] = initialClass.prototype[val['name']];
+                        //TODO: find a working way to prevent classes from being modified 
+                        // Object.freeze(initialClass.prototype); // TOO STRICT
+                        Object.defineProperty(initialClass, val['translated'],  {
+                          enumerable: false,
+                          configurable: false,
+                          writable: false}); // DOES NOT WORK
                     });
                 }
             });

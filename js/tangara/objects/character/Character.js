@@ -1,3 +1,4 @@
+"use strict";
 define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function($, TEnvironment, TUtils, TGraphicalObject) {
     var Character = function(characterName) {
         window.console.log("Initializing character");
@@ -176,22 +177,30 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
     Character.prototype.qSprite = qInstance.Character;
 
     Character.prototype._moveForward = function(value) {
-        this.qObject.p.destinationX+=value;
+        if (typeof value !== 'undefined' && !isNaN(value)) {
+          this.qObject.p.destinationX+=value;
+        }
         return;
     };
 
     Character.prototype._moveBackward = function(value) {
-        this.qObject.p.destinationX-=value;
+        if (typeof value !== 'undefined' && !isNaN(value)) {
+          this.qObject.p.destinationX-=value;
+        }
         return;
     };
         
     Character.prototype._moveUpward = function(value) {
-        this.qObject.p.destinationY-=value;
+        if (typeof value !== 'undefined' && !isNaN(value)) {
+          this.qObject.p.destinationY-=value;
+        }
         return;
     };
 
     Character.prototype._moveDownward = function(value) {
-        this.qObject.p.destinationY+=value;
+        if (typeof value !== 'undefined' && !isNaN(value)) {
+          this.qObject.p.destinationY+=value;
+        }
         return;
     };
     
@@ -202,103 +211,115 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
     };
         
     Character.prototype._loadSkeleton = function(name) {
-        window.console.log("loading skeleton");
-        var baseImageUrl = this.getResource(name)+"/";
-        var skeletonUrl = baseImageUrl+"skeleton.json";
-        window.console.log("Skeleton URL : "+skeletonUrl);
-        var parent = this;
-        var elements = new Array();
-        var assets = new Array();
-        $.ajax({
-            dataType: "json",
-            url: skeletonUrl,
-            async: false,
-            success: function(data) {
-                $.each( data['skeleton']['element'], function( key, val ) {
-                    elements.push(val);
-                    assets.push(baseImageUrl+val['image']);
-                });
-            }
-        }).fail(function(jqxhr, textStatus, error) {
-            throw new Error(TUtils.format(parent.getMessage("unknwon skeleton"), name));
-        });
-        
-        var qObject = this.qObject;
-        var qStage = qInstance.stage();
-        for (var i=0; i<qObject.children.length; i++) {
-          qObject.children[i].destroy();
+        if (typeof name !== 'undefined' && (typeof name === 'string' || name instanceof String)) {
+          window.console.log("loading skeleton");
+          var baseImageUrl = this.getResource(name)+"/";
+          var skeletonUrl = baseImageUrl+"skeleton.json";
+          window.console.log("Skeleton URL : "+skeletonUrl);
+          var parent = this;
+          var elements = new Array();
+          var assets = new Array();
+          $.ajax({
+              dataType: "json",
+              url: skeletonUrl,
+              async: false,
+              success: function(data) {
+                  $.each( data['skeleton']['element'], function( key, val ) {
+                      elements.push(val);
+                      assets.push(baseImageUrl+val['image']);
+                  });
+              }
+          }).fail(function(jqxhr, textStatus, error) {
+              throw new Error(TUtils.format(parent.getMessage("unknwon skeleton"), name));
+          });
+
+          var qObject = this.qObject;
+          var qStage = qInstance.stage();
+          for (var i=0; i<qObject.children.length; i++) {
+            qObject.children[i].destroy();
+          }
+          var chest = null;
+          var leftArm = null;
+          var rightArm = null;
+          var character = this;
+          qInstance.load(assets,function() {
+              for (var i=0; i<elements.length; i++) {
+                  var val = elements[i];
+                  var element = new qInstance.CharacterPart({asset:baseImageUrl+ val['image'], name:val['name']});
+                  if (typeof val['cx'] !== 'undefined') {
+                    element.p.cx = val['cx'];
+                  }
+                  if (typeof val['cy'] !== 'undefined') {
+                    element.p.cy = val['cy'];
+                  }
+                  element.p.x = val['coordinateX']+element.p.cx;
+                  element.p.y = val['coordinateY']+element.p.cy;
+                  qStage.insert(element, qObject);
+                  switch(val['name']) {
+                    case 'leftArm' : 
+                      character.leftElement = element;
+                      leftArm = element;
+                      break;
+                    case 'rightArm' :
+                      character.rightElement = element;
+                      rightArm = element;
+                      break;
+                    case 'leftLeg' : 
+                      character.leftElement = element;
+                      break;
+                    case 'rightLeg' :
+                      character.rightElement = element;
+                      break;
+                    case 'chest' :
+                      chest = element;
+                      break;
+                  }
+                  element.startAnimation();
+              }
+              if (chest !== null) {
+                chest.p.leftArm = leftArm;
+                chest.p.rightArm = rightArm;
+              }
+              if (character.initialize) {
+                  qObject.p.x = qObject.p.w/2;
+                  qObject.p.y = qObject.p.h/2;
+                  qObject.p.destinationX = qObject.p.x;
+                  qObject.p.destinationY = qObject.p.y;
+                  this.initialize = false;
+              }
+          });
         }
-        var chest = null;
-        var leftArm = null;
-        var rightArm = null;
-        var character = this;
-        qInstance.load(assets,function() {
-            for (var i=0; i<elements.length; i++) {
-                var val = elements[i];
-                var element = new qInstance.CharacterPart({asset:baseImageUrl+ val['image'], name:val['name']});
-                if (typeof val['cx'] !== 'undefined') {
-                  element.p.cx = val['cx'];
-                }
-                if (typeof val['cy'] !== 'undefined') {
-                  element.p.cy = val['cy'];
-                }
-                element.p.x = val['coordinateX']+element.p.cx;
-                element.p.y = val['coordinateY']+element.p.cy;
-                qStage.insert(element, qObject);
-                switch(val['name']) {
-                  case 'leftArm' : 
-                    character.leftElement = element;
-                    leftArm = element;
-                    break;
-                  case 'rightArm' :
-                    character.rightElement = element;
-                    rightArm = element;
-                    break;
-                  case 'leftLeg' : 
-                    character.leftElement = element;
-                    break;
-                  case 'rightLeg' :
-                    character.rightElement = element;
-                    break;
-                  case 'chest' :
-                    chest = element;
-                    break;
-                }
-                element.startAnimation();
-            }
-            if (chest !== null) {
-              chest.p.leftArm = leftArm;
-              chest.p.rightArm = rightArm;
-            }
-            if (character.initialize) {
-                qObject.p.x = qObject.p.w/2;
-                qObject.p.y = qObject.p.h/2;
-                qObject.p.destinationX = qObject.p.x;
-                qObject.p.destinationY = qObject.p.y;
-                this.initialize = false;
-            }
-        });
     };
         
     Character.prototype._change = function(name) {
-        var simplifiedName = TUtils.removeAccents(name);
-        this._loadSkeleton(this.getMessage(simplifiedName));
+        if (typeof name !== 'undefined' && (typeof name === 'string' || name instanceof String)) {
+          var simplifiedName = TUtils.removeAccents(name);
+          this._loadSkeleton(this.getMessage(simplifiedName));
+        }
     };
     
     Character.prototype._raiseLeftArm = function(value) {
-        this.leftElement.lower(value);
+        if (typeof value !== 'undefined' && !isNaN(value)) {
+          this.leftElement.lower(value);
+        }
     };
 
     Character.prototype._raiseRightArm = function(value) {
-        this.rightElement.raise(value);      
+        if (typeof value !== 'undefined' && !isNaN(value)) {
+          this.rightElement.raise(value);
+        }
     };
     
     Character.prototype._lowerLeftArm = function(value) {
-        this.leftElement.raise(value);      
+        if (typeof value !== 'undefined' && !isNaN(value)) {
+          this.leftElement.raise(value);
+        }
     };
 
     Character.prototype._lowerRightArm = function(value) {
-        this.rightElement.lower(value);      
+        if (typeof value !== 'undefined' && !isNaN(value)) {
+          this.rightElement.lower(value);
+        }
     };
 
     TEnvironment.internationalize(Character);

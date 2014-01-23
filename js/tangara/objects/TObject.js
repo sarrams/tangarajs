@@ -1,80 +1,43 @@
-define(['jquery','jquery_animate_enhanced','TEnvironment'], function($, animate_enhanced, TEnvironment) {
-    function TGraphicalObject() {
-        this.qObject = new this.qSprite();
+define(['jquery','TEnvironment'], function($, TEnvironment) {
+    function TObject() {
         this.load();
-        var canvas = TEnvironment.getCanvas();
-        canvas.addGraphicalObject(this);
     }
 
-    TGraphicalObject.prototype.className = "";
-    
-    var qInstance = TEnvironment.getQuintusInstance();
-    
-    qInstance.Sprite.extend("TGraphicalObject",{
-      init: function(props,defaultProps) {
-            this._super(qInstance._extend({
-                designMode: false
-            },props),defaultProps);
-      },
-      drag: function(touch) {
-        if (this.p.designMode) {
-          this.p.dragging = true;
-          this.p.x = touch.origX + touch.dx;
-          this.p.y = touch.origY + touch.dy;
-        }
-       },
-      touchEnd: function(touch) {
-        if (this.p.designMode) {
-          this.p.dragging = false;
-        }
-      },
-      w:10,
-      h:10,
-      x:0,
-      y:0});
-    
-    TGraphicalObject.prototype.qSprite = qInstance.TGraphicalObject;
+    TObject.prototype.className = "";
 
-    TGraphicalObject.prototype.messages = new Array();
+    TObject.prototype.messages = null;
 
-    TGraphicalObject.prototype.getSprite = function () {
-        return this.qObject;
-    };
-
-    TGraphicalObject.prototype.load = function() {
-        var messageFile = this.getResource("messages.json");
-        var language = TEnvironment.getLanguage();
-        var parent = this;
-
-        if (this.className.length !== 0) {
-        $.ajax({
-            dataType: "json",
-            url: messageFile,
-            async: false,
-            success: function(data) {
-                if (typeof data[language] !== 'undefined'){
-                    parent.messages = data[language];
-                    window.console.log("found messages in language: "+language);
-                } else {
-                    window.console.log("found no messages for language: "+language);
+    TObject.prototype.load = function() {
+        if (this.className.length !== 0 && this.constructor.prototype.messages === null) {
+            this.constructor.prototype.messages = new Array();
+            var messageFile = this.getResource("messages.json");
+            var language = TEnvironment.getLanguage();
+            var parent = this;
+            $.ajax({
+                dataType: "json",
+                url: messageFile,
+                async: false,
+                success: function(data) {
+                    if (typeof data[language] !== 'undefined'){
+                        parent.constructor.prototype.messages = data[language];
+                        window.console.log("found messages in language: "+language);
+                    } else {
+                        window.console.log("found no messages for language: "+language);
+                    }
                 }
-            }
-        });
-      }
+            });
+        }
     };
 
-    TGraphicalObject.prototype.deleteObject = function() {
-        var canvas = TEnvironment.getCanvas();
-        canvas.removeGraphicalObject(this);
-        this.getQObject().destroy();
+    TObject.prototype.deleteObject = function() {
         TEnvironment.deleteTObject(this);
     };
 
-    TGraphicalObject.prototype.getResource = function(location) {
+    TObject.prototype.getResource = function(location) {
         return TEnvironment.getObjectsUrl()+"/"+this.className.toLowerCase()+"/resources/"+location;
     };
 
-    TGraphicalObject.prototype.getMessage = function(code) {
+    TObject.prototype.getMessage = function(code) {
         if (typeof this.messages[code] !== 'undefined') {
             return this.messages[code];
         } else {
@@ -82,34 +45,9 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($, animate_
         }
     };
     
-    TGraphicalObject.prototype.getQObject = function() {
-        return this.qObject;
-    };
-    
-    TGraphicalObject.prototype._delete = function() {
+    TObject.prototype._delete = function() {
         this.deleteObject();
     };
-    
-    TGraphicalObject.prototype._setDesignMode = function(value) {
-        var qObject = this.qObject;
-        if (value) {
-          qObject.on("drag");
-          qObject.on("touchEnd");
-          for (var i=0; i<qObject.children.length; i++) {
-            qObject.children[i].on("drag");
-            qObject.children[i].on("touchEnd");
-          }
-          qObject.p.designMode = true;
-        } else {
-          qObject.off("drag");
-          qObject.off("touchEnd");
-          for (var i=0; i<qObject.children.length; i++) {
-            qObject.children[i].off("drag");
-            qObject.children[i].off("touchEnd");
-          }
-          qObject.p.designMode = false;
-        }
-    };
 
-    return TGraphicalObject;
+    return TObject;
 });

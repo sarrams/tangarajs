@@ -7,6 +7,5 @@ julien.définirPosition(100,155);
 pomme = new Animation("pomme.gif");
 pomme.définirPosition(720,90);
 julien.peutAttraper(pomme, "tangara.alerter(\"Julien a pris la pomme !\")");
-//julien.peutAttraper(pomme);
 maison = new Animation("maison.gif");
 maison.définirPosition(0,18);

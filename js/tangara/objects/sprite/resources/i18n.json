@@ -5,13 +5,11 @@
             {"name":"_moveBackward","translated":"reculer","displayed":"reculer(50)"},
             {"name":"_moveUpward","translated":"monter","displayed":"monter(50)"},
             {"name":"_moveDownward","translated":"descendre","displayed":"descendre(50)"},
-            {"name":"_raiseLeftArm","translated":"leverBrasGauche","displayed":"leverBrasGauche(90)"},
-            {"name":"_raiseRightArm","translated":"leverBrasDroit","displayed":"leverBrasDroit(90)"},
-            {"name":"_lowerLeftArm","translated":"baisserBrasGauche","displayed":"baisserBrasGauche(90)"},
-            {"name":"_lowerRightArm","translated":"baisserBrasDroit","displayed":"baisserBrasDroit(50)"},
             {"name":"_stop","translated":"arreter","displayed":"arrêter()"},
-            {"name":"_change","translated":"changer","displayed":"changer(\"garçon\")"},
-            {"name":"_delete","translated":"supprimer","displayed":"supprimer()"}
+            {"name":"_addImage","translated":"ajouterImage","displayed":"ajouterImage(\"image\")"},
+            {"name":"_displayImage","translated":"afficherImage","displayed":"afficherImage(\"image\")"},
+            {"name":"_delete","translated":"supprimer","displayed":"supprimer()"},
+            {"name":"_setLocation","translated":"d\u00e9finirPosition","displayed":"d\u00e9finirPosition(0,0)"}
         ]
     }
 }

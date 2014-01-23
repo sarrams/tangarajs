@@ -2,12 +2,15 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
     var Sprite = function(name) {
         window.console.log("Initializing sprite");
         TGraphicalObject.call(this);
-        if (typeof name !== 'unefined') {
-          this._loadResource(name);
+        this.images = new Array();
+        this.displayedImage = "";
+        if (typeof name === 'string') {
+          this._setImage(name);
         }
     };
     
     Sprite.prototype = new TGraphicalObject();
+    Sprite.prototype.className = "Sprite";
     
     var qInstance = TEnvironment.getQuintusInstance();
     
@@ -16,7 +19,8 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
             this._super(qInstance._extend({
                 destinationX: 0,
                 destinationY: 0,
-                velocity:200
+                velocity:200,
+                type:TGraphicalObject.TYPE_SPRITE
             },props),defaultProps);
         },
         step: function(dt) {
@@ -34,9 +38,28 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
                   p.y = Math.max(p.y-step, p.destinationY); 
               }
             }
+        },
+        touchEnd: function(touch) {
+          this.p.destinationX = this.p.x;
+          this.p.destinationY = this.p.y;
+          this._super(touch);
+        },
+        setLocation: function(x,y) {
+            this._super(x,y);
+            this.perform(function(){
+                this.p.destinationX = this.p.x;this.p.destinationY = this.p.y;
+            }, {});
+        },
+        setCenterLocation: function(x,y) {
+            this._super(x,y);
+            this.perform(function(){
+                this.p.destinationX = this.p.x;this.p.destinationY = this.p.y;
+            }, {});
         }
       });
-      
+    
+    Sprite.prototype.qSprite = qInstance.TSprite;
+    
     Sprite.prototype._moveForward = function(value) {
         if (typeof value !== 'undefined' && !isNaN(value)) {
           this.qObject.p.destinationX+=value;
@@ -70,60 +93,57 @@ define(['jquery','TEnvironment', 'TUtils', 'objects/TGraphicalObject'], function
         this.qObject.p.destinationY = this.qObject.p.y;
         return;
     };
-
-
     
-    Sprite.prototype._loadResource = function(name) {
-        asset = TEnvironment.getUserResource(name);
-        var qObject = this.qObject;
-        qInstance.load(asset,function() {
-            qObject.p.asset = asset;
-              for (var i=0; i<elements.length; i++) {
-                  var val = elements[i];
-                  var element = new qInstance.CharacterPart({asset:baseImageUrl+ val['image'], name:val['name']});
-                  if (typeof val['cx'] !== 'undefined') {
-                    element.p.cx = val['cx'];
-                  }
-                  if (typeof val['cy'] !== 'undefined') {
-                    element.p.cy = val['cy'];
-                  }
-                  element.p.x = val['coordinateX']+element.p.cx;
-                  element.p.y = val['coordinateY']+element.p.cy;
-                  qStage.insert(element, qObject);
-                  switch(val['name']) {
-                    case 'leftArm' : 
-                      character.leftElement = element;
-                      leftArm = element;
-                      break;
-                    case 'rightArm' :
-                      character.rightElement = element;
-                      rightArm = element;
-                      break;
-                    case 'leftLeg' : 
-                      character.leftElement = element;
-                      break;
-                    case 'rightLeg' :
-                      character.rightElement = element;
-                      break;
-                    case 'chest' :
-                      chest = element;
-                      break;
-                  }
-                  element.startAnimation();
-              }
-              if (chest !== null) {
-                chest.p.leftArm = leftArm;
-                chest.p.rightArm = rightArm;
-              }
-              if (character.initialize) {
-                  qObject.p.x = qObject.p.w/2;
-                  qObject.p.y = qObject.p.h/2;
-                  qObject.p.destinationX = qObject.p.x;
-                  qObject.p.destinationY = qObject.p.y;
-                  this.initialize = false;
-              }
-          });
+    Sprite.prototype._addImage = function(name) {
+        if (typeof name === 'string') {
+            // add image only if not already added
+            if (typeof this.images[name] === 'undefined') {
+                var asset = TEnvironment.getUserResource(name);
+                var qObject = this.qObject;
+                var sprite = this;
+                sprite.images[name] = asset;
+                window.console.log("loading asset '"+asset+"'");
+                qInstance.load(asset, function() {
+                    // in case _displayImage is called while loading, set image
+                    if (typeof sprite.images[sprite.displayedImage] !=='undefined' && qObject.p.asset !== sprite.images[sprite.displayedImage]) {
+                        qObject.asset(sprite.images[sprite.displayedImage], true);
+                        if (!qObject.p.initialized) {
+                            qObject.initialized();
+                        }
+                    }
+                });
+            }
+        } else {
+            throw new Error(this.getMessage("format error"));
+        }
     };
+
+    Sprite.prototype._displayImage = function(name) {
+        if (typeof name === 'string' && typeof this.images[name] !== 'undefined' && this.displayedImage !== name) {
+            window.console.log("displaying image '"+name+"'");
+            var asset = this.images[name];
+            var qObject = this.qObject;
+            this.displayedImage = name;
+            // check if image actually loaded
+            if (qInstance.assets[asset]) {
+                window.console.log("setting asset '"+asset+"'");
+                qObject.asset(asset, true);
+                if (!qObject.p.initialized) {
+                    qObject.initialized();
+                }
+            }
+            // otherwise, image will be displayed once loaded
+        } else {
+            throw new Error(TUtils.format(this.getMessage("resource not found"), name));
+        }
+    };
+
+    Sprite.prototype._setImage = function(name) {
+        this._addImage(name);
+        this._displayImage(name);
+    };
+    
+    TEnvironment.internationalize(Sprite);
     
     return Sprite;
 });

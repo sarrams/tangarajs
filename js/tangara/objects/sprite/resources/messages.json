@@ -1,15 +1,10 @@
 {
     "fr": {
-        "garcon":"boy",
-        "fille":"girl",
-        "chien":"dog",
-        "chat":"cat",
-        "unknwon skeleton":"Personnage '{0}' introuvable"
+        "resource not found":"Image '{0}' introuvable",
+        "format error":"Nom incorrect"
     },
     "en": {
-        "boy":"boy",
-        "girl":"girl",
-        "dog":"dog",
-        "cat":"cat"
+        "resource not found":"Picture '{0}' cannot be found",
+        "format error":"Wrong name"
     }
 }

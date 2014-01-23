@@ -37,6 +37,9 @@ define(['jquery','TRuntime', 'quintus'], function($, TRuntime, Quintus) {
         this.loadGraphics = function() {
             window.console.log("* Loading Graphics");
             quintusInstance = Quintus().include("Sprites, Scenes, 2D, UI, Anim, Input, Touch");
+            // Debug : 
+            //quintusInstance.debug = true;
+            //quintusInstance.debugFill = true;
         };
         
         this.loadRuntime = function() {
@@ -67,6 +70,12 @@ define(['jquery','TRuntime', 'quintus'], function($, TRuntime, Quintus) {
             if (typeof log !== 'undefined') {
                 log.addLines(text, success);
             }
+        };
+        
+        this.addLogMessage = function(text) {
+            if (typeof log !== 'undefined') {
+                log.addMessage(text);
+            }            
         };
         
         this.clearLog = function() {

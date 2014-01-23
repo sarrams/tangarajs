@@ -7,14 +7,19 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($, animate_
     }
 
     TGraphicalObject.prototype.className = "";
+    TGraphicalObject.TYPE_CHARACTER = 0x0100;
+    TGraphicalObject.TYPE_CATCHABLE = 0x0200;
+    TGraphicalObject.TYPE_SPRITE = 0x0400;
     
     var qInstance = TEnvironment.getQuintusInstance();
     
     qInstance.Sprite.extend("TGraphicalObject",{
       init: function(props,defaultProps) {
             this._super(qInstance._extend({
-                designMode: false
+                designMode: false,
+                initialized: false
             },props),defaultProps);
+            this.operations = new Array();
       },
       drag: function(touch) {
         if (this.p.designMode) {
@@ -28,39 +33,63 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($, animate_
           this.p.dragging = false;
         }
       },
-      w:10,
-      h:10,
-      x:0,
-      y:0});
+      perform: function(action, parameters) {
+        if (this.p.initialized) {
+            action.apply(this,parameters);
+        } else {
+            this.operations.push([action, parameters]);
+        }
+      },
+      initialized: function() {
+        this.p.initialized = true;
+        for (var i=0; i<this.operations.length; i++) {
+            var operation = this.operations[i];
+            operation[0].apply(this, operation[1]);
+        }
+        this.operations = new Array();
+      },
+      setLocation: function(x, y) {
+        this.perform(function(x,y) {
+            this.p.x = x+this.p.w/2;
+            this.p.y = y+this.p.h/2;
+        }, [x,y] );
+      },
+      setCenterLocation: function(x, y) {
+        this.perform(function(x,y) {
+            this.p.x = x;
+            this.p.y = y;
+        }, [x,y] );
+      }
+    });
     
     TGraphicalObject.prototype.qSprite = qInstance.TGraphicalObject;
 
-    TGraphicalObject.prototype.messages = new Array();
+    TGraphicalObject.prototype.messages = null;
 
     TGraphicalObject.prototype.getSprite = function () {
         return this.qObject;
     };
 
     TGraphicalObject.prototype.load = function() {
-        var messageFile = this.getResource("messages.json");
-        var language = TEnvironment.getLanguage();
-        var parent = this;
-
-        if (this.className.length !== 0) {
-        $.ajax({
-            dataType: "json",
-            url: messageFile,
-            async: false,
-            success: function(data) {
-                if (typeof data[language] !== 'undefined'){
-                    parent.messages = data[language];
-                    window.console.log("found messages in language: "+language);
-                } else {
-                    window.console.log("found no messages for language: "+language);
+        if (this.className.length !== 0 && this.constructor.prototype.messages === null) {
+            this.constructor.prototype.messages = new Array();
+            var messageFile = this.getResource("messages.json");
+            var language = TEnvironment.getLanguage();
+            var parent = this;
+            $.ajax({
+                dataType: "json",
+                url: messageFile,
+                async: false,
+                success: function(data) {
+                    if (typeof data[language] !== 'undefined'){
+                        parent.constructor.prototype.messages = data[language];
+                        window.console.log("found messages in language: "+language);
+                    } else {
+                        window.console.log("found no messages for language: "+language);
+                    }
                 }
-            }
-        });
-      }
+            });
+        }
     };
 
     TGraphicalObject.prototype.deleteObject = function() {
@@ -89,6 +118,18 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($, animate_
     TGraphicalObject.prototype._delete = function() {
         this.deleteObject();
     };
+
+    TGraphicalObject.prototype._setCenterLocation = function(x,y) {
+        if (typeof x === 'number' && typeof y === 'number') {
+            this.qObject.setCenterLocation(x,y);
+        }
+    };
+
+    TGraphicalObject.prototype._setLocation = function(x,y) {
+        if (typeof x === 'number' && typeof y === 'number') {
+            this.qObject.setLocation(x,y);
+        }
+    };
     
     TGraphicalObject.prototype._setDesignMode = function(value) {
         var qObject = this.qObject;
@@ -110,6 +151,6 @@ define(['jquery','jquery_animate_enhanced','TEnvironment'], function($, animate_
           qObject.p.designMode = false;
         }
     };
-
+    
     return TGraphicalObject;
 });

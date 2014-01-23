@@ -133,6 +133,10 @@ body, html {
     color:#FF0000;
 }
 
+.tlog-message {
+    color:#0000FF;
+}
+
 .runtime-frame {
     display:none;
 }

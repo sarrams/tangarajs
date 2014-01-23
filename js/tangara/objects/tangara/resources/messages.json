@@ -1,15 +1,8 @@
 {
     "fr": {
-        "garcon":"boy",
-        "fille":"girl",
-        "chien":"dog",
-        "chat":"cat",
-        "unknwon skeleton":"Personnage '{0}' introuvable"
+        "script unreachable":"Programme '{0}' introuvable"
     },
     "en": {
-        "boy":"boy",
-        "girl":"girl",
-        "dog":"dog",
-        "cat":"cat"
+        "script unreachable":"Could not find program '{0}'"
     }
 }

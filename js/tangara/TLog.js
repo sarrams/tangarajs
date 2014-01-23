@@ -15,24 +15,36 @@ define(['jquery','TCanvas'], function($, TCanvas) {
         };
         
         this.addLines = function(text, errorMessage) {
-            var lines = text.split("\n");
-            var success = (typeof(errorMessage) === 'undefined');
-            for (var i=0; i<lines.length;i++) {
-                line = lines[i];
-                var row = document.createElement("div");
-                if (success) {
-                    row.className = "tlog-row tlog-success";
-                } else {
-                    row.className = "tlog-row tlog-failure";
+            if (typeof text === 'string') {
+                var lines = text.split("\n");
+                var success = (typeof(errorMessage) === 'undefined');
+                for (var i=0; i<lines.length;i++) {
+                    line = lines[i];
+                    var row = document.createElement("div");
+                    if (success) {
+                        row.className = "tlog-row tlog-success";
+                    } else {
+                        row.className = "tlog-row tlog-failure";
+                    }
+                    row.appendChild(document.createTextNode(line));
+                    domLog.appendChild(row);
+                    domOuterLog.scrollTop = domOuterLog.scrollHeight;
                 }
-                row.appendChild(document.createTextNode(line));
-                domLog.appendChild(row);
-                domOuterLog.scrollTop = domOuterLog.scrollHeight;
+                if (!success) {
+                    var row = document.createElement("div");
+                    row.className = "tlog-row tlog-failure";
+                    row.appendChild(document.createTextNode(errorMessage));
+                    domLog.appendChild(row);
+                    domOuterLog.scrollTop = domOuterLog.scrollHeight;
+                }
             }
-            if (!success) {
+        };
+        
+        this.addMessage = function(text) {
+            if (typeof text === 'string') {
                 var row = document.createElement("div");
-                row.className = "tlog-row tlog-failure";
-                row.appendChild(document.createTextNode(errorMessage));
+                row.className = "tlog-row tlog-message";
+                row.appendChild(document.createTextNode(text));
                 domLog.appendChild(row);
                 domOuterLog.scrollTop = domOuterLog.scrollHeight;
             }
@@ -40,7 +52,7 @@ define(['jquery','TCanvas'], function($, TCanvas) {
         
         this.clear = function() {
             domLog.innerHTML = '';
-        }
+        };
 
     } 
     

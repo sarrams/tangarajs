@@ -6,5 +6,21 @@
             "es": "Personaje",
             "en": "Character"
         }
+    },
+    "Sprite": {
+        "path": "sprite",
+        "translations": {
+            "fr": "Animation",
+            "es": "Animacion",
+            "en": "Sprite"
+        }
+    },
+    "Tangara": {
+        "path": "tangara",
+        "translations": {
+            "fr": "tangara",
+            "es": "tangara",
+            "en": "tangara"
+        }
     }
 }

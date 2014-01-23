@@ -10,6 +10,7 @@
         "boy":"boy",
         "girl":"girl",
         "dog":"dog",
-        "cat":"cat"
+        "cat":"cat",
+        "unknwon skeleton":"Character '{0}' unknown"
     }
 }

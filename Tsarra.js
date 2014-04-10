@@ -1,6 +1,6 @@
 define(['jquery'], function($) {
-    function TRegis() {
-        window.console.log("Regis loading");
+    function TSarra() {
+        window.console.log("Sarra loading");
         
         this.simple = function() {
             console.log("méthode simple");

@@ -57,3 +57,9 @@ define(['jquery', 'split-pane','TCanvas', 'TEnvironment', 'TEditor', 'TLog'], fu
     
     return TFrame;
 });
+
+define(['jquery','TCanvas', 'TSarra'], function($, Tcanvas, TSarra) {
+    var maclasse = new TSarra();
+     maclasse.parler("Bonjour");
+};
+

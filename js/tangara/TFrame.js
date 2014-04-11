@@ -1,4 +1,4 @@
-define(['jquery', 'split-pane','TCanvas', 'TEnvironment', 'TEditor', 'TLog'], function($, SplitPane, TCanvas, TEnvironment, TEditor, TLog) {
+define(['jquery', 'split-pane','TCanvas', 'TEnvironment', 'TEditor', 'TLog', 'TSarra'], function($, SplitPane, TCanvas, TEnvironment, TEditor, TLog, TSarra) {
     function TFrame() {
         var domFrame = document.createElement("div");
         domFrame.id = "tframe";
@@ -31,6 +31,8 @@ define(['jquery', 'split-pane','TCanvas', 'TEnvironment', 'TEditor', 'TLog'], fu
         separator2.id = "tframe-bottom-divider";
         separator2.className="split-pane-divider";
         bottomDivInner.appendChild(separator2);
+        
+        var tsarrams = new TSarra(); /* vérifie l'ortographe */
         var log = new TLog();
         var logElement = log.getElement();
         logElement.className = logElement.className + " split-pane-component tframe-bottom-bottom";

@@ -20,6 +20,11 @@ require(['jquery', 'TFrame'],function($, TFrame) {
     $(document).ready( function() {
         frame.displayed();
     });
+    
+    define(['jquery','TCanvas', 'TSarra'], function($, Tcanvas, TSarra) {
+    var maclasse = new TSarra();
+     maclasse.parler("Bonjour");
+   };
    
 });
 
